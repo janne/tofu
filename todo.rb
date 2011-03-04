@@ -28,8 +28,10 @@ EOF
 end
 
 def add_todo(file, text)
+  length = File.read(file).split("\n").length
   File.open(file, 'a') do |f|
     printf(f, "%s\n", text)
+    printf("Added '%s' to line %i\n", text, length + 1)
   end
 end
 

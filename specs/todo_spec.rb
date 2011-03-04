@@ -23,9 +23,9 @@ describe "todo.rb" do
     `#{cmd} missing_file`.should == "No such file exists 'missing_file'. You may create it with 'touch missing_file'\n"
   end
   it "should be able to add items" do
-    `#{cmd} #{todo} add my data`
+    `#{cmd} #{todo} add my data`.should == "Added 'my data' to line 1\n"
     File.read(todo).include?('my data').should be_true
-    `#{cmd} #{todo} a more data`
+    `#{cmd} #{todo} a more data`.should == "Added 'more data' to line 2\n"
     File.read(todo).include?('more data').should be_true
   end
   it "should be able to list items" do

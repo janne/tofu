@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+VER = 0.1
+
 def help
   puts <<EOF
 Synopsis 
@@ -30,7 +32,13 @@ Copyright
 EOF
 end
 
+def version
+  puts "todo.rb version #{VER}"
+end
+
 case ARGV[0]
   when '-h', '--help'
     help
+  when '-v', '--version'
+    version
 end

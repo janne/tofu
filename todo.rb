@@ -36,6 +36,11 @@ def version
   puts "todo.rb version #{VER}"
 end
 
+if ARGV.length == 0
+  help
+  exit 1
+end
+
 case ARGV[0]
   when '-h', '--help'
     help

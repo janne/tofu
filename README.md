@@ -31,12 +31,3 @@ Add multiple aliases for other lists:
 <pre>
 alias w=~/bin/todo.rb ~/Dropbox/todo/work.txt
 </pre>
-
-Ideas
------
-
-Plugins may provide more functionality, such as:
-
-* Archive
-* Priority
-* Contexts

@@ -45,8 +45,9 @@ end
 
 def list_todos(file, filters)
   lines = File.read(file).split("\n")
-  lines_with_num = (1..lines.length).to_a.zip(lines)
-  lines_with_num.sort{|a, b| a[1] <=> b[1] }.each{|i, text| puts "#{i} #{text}"}
+  lines = (1..lines.length).to_a.zip(lines)
+  lines = lines.select{|i, line| filters.all?{|filter| line.include?(filter)}} unless filters.empty?
+  lines.sort{|a, b| a[1] <=> b[1] }.each{|i, text| puts "#{i} #{text}"}
 end
 
 if ARGV.length == 0

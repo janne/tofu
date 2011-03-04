@@ -38,4 +38,13 @@ describe "todo.rb" do
     end
     `#{cmd} #{todo} -l`.should == "2 abc\n3 klm\n1 xyz\n"
   end
+  it "should be able to list items containing elements" do
+    File.open(todo, 'a') do |f|
+      f.write("xyz\n")
+      f.write("abc\n")
+      f.write("klz\n")
+    end
+    `#{cmd} #{todo} -l z`.should == "3 klz\n1 xyz\n"
+    `#{cmd} #{todo} -l z k`.should == "3 klz\n"
+  end
 end

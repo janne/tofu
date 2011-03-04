@@ -60,6 +60,14 @@ def do_todo(file, nums)
       puts "Marked '#{text}' as done"
     end
   end
+  File.open(file + '.tmp', 'w') do |f|
+    lines.each_with_index do |line, i|
+      unless nums.include?(i+1)
+        f.printf("%s\n", line)
+      end
+    end
+    `mv #{file + '.tmp'} #{file}`
+  end
 end
 
 def open_in_editor(file)

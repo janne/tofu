@@ -80,10 +80,16 @@ describe "todo.rb" do
       `#{cmd} #{todo} do 2`.should == "Missing or invalid line numbers\n"
       `#{cmd} #{todo} do 1 2`.should == "Missing or invalid line numbers\n"
     end
+    it "should remove done items from todo file" do
+      File.open(todo, 'a') {|f| f.write("todo\n")}
+      `#{cmd} #{todo} do 1`.should == "Marked 'todo' as done\n"
+      `#{cmd} #{todo}`.should == ""
+    end
     it "should put done items in done file" do
       File.open(todo, 'a') {|f| f.write("todo\n")}
       `#{cmd} #{todo} do 1`.should == "Marked 'todo' as done\n"
       File.read(done).include?('todo').should == true
+      File.exists?(todo + '.tmp').should == false
     end
   end
 end

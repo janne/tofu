@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-VER = 0.1
-
 def help
   puts <<EOF
 Synopsis 
@@ -20,9 +18,6 @@ Usage
   todo.rb -h|--help
   Displays this help message
 
-  todo.rb -v|--version
-  Display the version, then exit
-
 Author
   Jan Andersson
 
@@ -30,10 +25,6 @@ Copyright
   Copyright (c) 2011 Jan Andersson. Licensed under the MIT License:
   http://www.opensource.org/licenses/mit-license.php
 EOF
-end
-
-def version
-  puts "todo.rb version #{VER}"
 end
 
 def add_todo(file, text)
@@ -57,8 +48,6 @@ end
 case ARGV[0]
 when '-h', '--help'
   help
-when '-v', '--version'
-  version
 else
   file = ARGV[0]
   unless File.exists?(file)
@@ -68,8 +57,6 @@ else
   case ARGV[1]
   when '-h', '--help'
     help
-  when '-v', '--version'
-    version
   when '-l', '--list'
     filters = ARGV[2..-1]
     list_todos(file, filters)

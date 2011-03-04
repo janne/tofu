@@ -21,10 +21,18 @@ describe "todo.rb" do
     `#{cmd} -v`.should == `#{cmd} --version`
   end
   it "should handle missing file" do
-    `#{cmd} missing_file`.should == "No such file exists 'missing_file'. Please create it first with 'touch missing_file'\n"
+    `#{cmd} missing_file`.should == "No such file exists 'missing_file'. You may create it with 'touch missing_file'\n"
   end
   it "should be able to add items" do
     `#{cmd} #{todo} my data`
     File.read(todo).include?('my data').should be_true
+  end
+  it "should be able to list items" do
+    File.open(todo, 'a') do |f|
+      f.write("xyz\n")
+      f.write("abc\n")
+      f.write("klm\n")
+    end
+    `#{cmd} #{todo} -l`.should == "2 abc\n3 klm\n1 xyz\n"
   end
 end

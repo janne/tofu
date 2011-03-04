@@ -43,30 +43,40 @@ def add_todo(file, text)
   end
 end
 
+def list_todos(file, filters)
+  lines = File.read(file).split("\n")
+  lines_with_num = (1..lines.length).to_a.zip(lines)
+  lines_with_num.sort{|a, b| a[1] <=> b[1] }.each{|i, text| puts "#{i} #{text}"}
+end
+
 if ARGV.length == 0
   help
   exit 1
 end
 
 case ARGV[0]
-  when '-h', '--help'
-    help
-    exit
-  when '-v', '--version'
-    version
-    exit
-  else
-    file = ARGV[0]
-    text = ARGV[1..-1].join(' ')
-end
-
-unless File.exists?(file)
-  puts "No such file exists '#{file}'. Please create it first with 'touch #{file}'"
-  exit 1
-end
-
-if text.empty?
-  $stdin.read.split("\n").each{|text| add_todo(file, text)}
+when '-h', '--help'
+  help
+  exit
+when '-v', '--version'
+  version
+  exit
 else
-  add_todo(file, text)
+  file = ARGV[0]
+  unless File.exists?(file)
+    puts "No such file exists '#{file}'. You may create it with 'touch #{file}'"
+    exit 1
+  end
+  case ARGV[1]
+  when '-l', '--list'
+    filters = ARGV[2..-1]
+    list_todos(file, filters)
+  else
+    text = ARGV[1..-1].join(' ')
+    if text.empty?
+      $stdin.read.split("\n").each{|text| add_todo(file, text)}
+    else
+      add_todo(file, text)
+    end
+  end
 end

@@ -36,6 +36,13 @@ def version
   puts "todo.rb version #{VER}"
 end
 
+def add_todo(file, text)
+  File.open(file, 'a') do |f|
+    f.write(text)
+    f.write("\n")
+  end
+end
+
 if ARGV.length == 0
   help
   exit 1
@@ -57,4 +64,5 @@ unless File.exists?(file)
   puts "No such file exists '#{file}'. Please create it first with 'touch #{file}'"
   exit 1
 end
-end
+
+add_todo(file, text)

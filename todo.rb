@@ -73,6 +73,9 @@ else
   when '-l', '--list'
     filters = ARGV[2..-1]
     list_todos(file, filters)
+  when /-\w/
+    puts "Unknown option"
+    exit 1
   else
     text = ARGV[1..-1].join(' ')
     if text.empty?

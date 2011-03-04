@@ -38,12 +38,27 @@ def add_todo(file, text)
   end
 end
 
+def done_file(file)
+  File.dirname(file) + "/done." + File.basename(file)
+end
+
+def today
+  Time.new.strftime("%Y-%m-%d")
+end
+
 def do_todo(file, nums)
   lines = File.read(file).split("\n")
   nums = nums.map(&:to_i)
   if nums.empty? || nums.any?{|nums| nums <= 0 || nums > lines.length}
     puts "Missing or invalid line numbers"
     exit 1
+  end
+  File.open(done_file(file), 'a') do |f|
+    nums.each do |num|
+      text = lines[num-1]
+      printf(f, "x #{today} #{text}\n")
+      puts "Marked '#{text}' as done"
+    end
   end
 end
 

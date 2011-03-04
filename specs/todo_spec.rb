@@ -1,5 +1,6 @@
 cmd = File.dirname(__FILE__) + "/../todo.rb"
 todo = File.dirname(__FILE__) + "/todo.txt"
+done = File.dirname(__FILE__) + "/done.todo.txt"
 
 describe "todo.rb" do
   before do
@@ -7,6 +8,7 @@ describe "todo.rb" do
   end
   after do
     `rm #{todo}`
+    `rm -f #{done}`
   end
   it "should be executable" do
     File.executable?(cmd)
@@ -71,12 +73,17 @@ describe "todo.rb" do
 
   describe "do" do
     it "should handle invalid line numbers" do
-      File.open(todo, 'a'){|f| f.write("todo\n") }
+      File.open(todo, 'a') {|f| f.write("todo\n")}
       `#{cmd} #{todo} do`.should == "Missing or invalid line numbers\n"
       `#{cmd} #{todo} do x`.should == "Missing or invalid line numbers\n"
       `#{cmd} #{todo} do 0`.should == "Missing or invalid line numbers\n"
       `#{cmd} #{todo} do 2`.should == "Missing or invalid line numbers\n"
       `#{cmd} #{todo} do 1 2`.should == "Missing or invalid line numbers\n"
+    end
+    it "should put done items in done file" do
+      File.open(todo, 'a') {|f| f.write("todo\n")}
+      `#{cmd} #{todo} do 1`.should == "Marked 'todo' as done\n"
+      File.read(done).include?('todo').should == true
     end
   end
 end

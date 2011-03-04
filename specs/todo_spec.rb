@@ -92,4 +92,10 @@ describe "todo.rb" do
       File.exists?(todo + '.tmp').should == false
     end
   end
+
+  describe "summary" do
+    it "should handle missing prefix" do
+      `#{cmd} #{todo} summary`.should == "Missing prefix\n"
+    end
+  end
 end

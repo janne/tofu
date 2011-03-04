@@ -104,5 +104,9 @@ describe "todo.rb" do
       File.open(todo, 'a') {|f| f.write("todo @b\ntodo @a @b\n")}
       `#{cmd} #{todo} summary @`.should == "@b: 2\n@a: 1\n"
     end
+    it "should only hit in beginning of words" do
+      File.open(todo, 'a') {|f| f.write("Kaka\nHaKaka\nHa Koko Keke\n")}
+      `#{cmd} #{todo} summary K`.should == "Kaka: 1\nKeke: 1\nKoko: 1\n"
+    end
   end
 end

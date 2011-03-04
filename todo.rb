@@ -85,11 +85,11 @@ def summary(file, prefixes)
   end
   hash = {}
   prefixes.each do |prefix|
-    File.read(file).scan(/#{prefix}\S*/) do |w|
+    File.read(file).scan(/(^|\s)(#{prefix}\S*)/) do |pre, w|
       hash[w] ? hash[w] += 1 : hash[w] = 1
     end
   end
-  hash.to_a.sort{|a,b| a[1] <=> b[1] }.reverse.each do |k, v|
+  hash.to_a.sort{|a,b| order = -(a[1] <=> b[1]); order == 0 ? a[0] <=> b[0] : order }.each do |k, v|
     puts "#{k}: #{v}"
   end
 end

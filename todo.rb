@@ -65,4 +65,8 @@ unless File.exists?(file)
   exit 1
 end
 
-add_todo(file, text)
+if text.empty?
+  $stdin.read.split("\n").each{|text| add_todo(file, text)}
+else
+  add_todo(file, text)
+end

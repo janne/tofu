@@ -12,4 +12,7 @@ describe "todo.rb" do
     `#{cmd} -v`.include?('version').should be_true
     `#{cmd} -v`.should == `#{cmd} --version`
   end
+  it "should handle missing file" do
+    `#{cmd} missing_file`.should == "No such file exists 'missing_file'. Please create it first with 'touch missing_file'\n"
+  end
 end

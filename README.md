@@ -2,6 +2,9 @@ todo.rb
 =======
 
 <pre>
+todo.rb -h
+This help message
+
 todo.rb file [args...]
 Add todo. Run without arguments to create todos from STDIN, one per line
 

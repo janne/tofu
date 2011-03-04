@@ -47,4 +47,10 @@ describe "todo.rb" do
     `#{cmd} #{todo} -l z`.should == "3 klz\n1 xyz\n"
     `#{cmd} #{todo} -l z k`.should == "3 klz\n"
   end
+  it "should space pad line numbers" do
+    File.open(todo, 'a') do |f|
+      10.times { f.write("a\n") }
+    end
+    `#{cmd} #{todo} -l`.should == " 1 a\n 2 a\n 3 a\n 4 a\n 5 a\n 6 a\n 7 a\n 8 a\n 9 a\n10 a\n"
+  end
 end

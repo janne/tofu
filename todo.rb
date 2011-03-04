@@ -38,8 +38,7 @@ end
 
 def add_todo(file, text)
   File.open(file, 'a') do |f|
-    f.write(text)
-    f.write("\n")
+    printf(f, "%s\n", text)
   end
 end
 
@@ -47,7 +46,7 @@ def list_todos(file, filters)
   lines = File.read(file).split("\n")
   lines = (1..lines.length).to_a.zip(lines)
   lines = lines.select{|i, line| filters.all?{|filter| line.include?(filter)}} unless filters.empty?
-  lines.sort{|a, b| a[1] <=> b[1] }.each{|i, text| puts "#{i} #{text}"}
+  lines.sort{|a, b| a[1] <=> b[1] }.each{|i, text| printf("%*i %s\n", lines.length.to_s.length, i, text) }
 end
 
 if ARGV.length == 0

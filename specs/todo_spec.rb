@@ -1,6 +1,6 @@
 describe "todo.rb" do
-  CMD = '../todo.rb'
+  cmd = File.dirname(__FILE__) + "/../todo.rb"
   it "should be executable" do
-    File.executable?(CMD)
+    File.executable?(cmd)
   end
 end

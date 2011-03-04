@@ -97,5 +97,12 @@ describe "todo.rb" do
     it "should handle missing prefix" do
       `#{cmd} #{todo} summary`.should == "Missing prefix\n"
     end
+    it "should handle missing chars" do
+      `#{cmd} #{todo} summary x`.should == ""
+    end
+    it "should output a summary" do
+      File.open(todo, 'a') {|f| f.write("todo @b\ntodo @a @b\n")}
+      `#{cmd} #{todo} summary @`.should == "@a: 1\n@b: 2\n"
+    end
   end
 end

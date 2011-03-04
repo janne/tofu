@@ -83,6 +83,15 @@ def summary(file, prefixes)
     puts "Missing prefix"
     exit 1
   end
+  hash = {}
+  prefixes.each do |prefix|
+    File.read(file).scan(/#{prefix}\S*/) do |w|
+      hash[w] ? hash[w] += 1 : hash[w] = 1
+    end
+  end
+  hash.keys.sort.each do |k|
+    puts "#{k}: #{hash[k]}"
+  end
 end
 
 def list_todos(file, filters)

@@ -102,7 +102,7 @@ describe "todo.rb" do
     end
     it "should output a summary" do
       File.open(todo, 'a') {|f| f.write("todo @b\ntodo @a @b\n")}
-      `#{cmd} #{todo} summary @`.should == "@a: 1\n@b: 2\n"
+      `#{cmd} #{todo} summary @`.should == "@b: 2\n@a: 1\n"
     end
   end
 end

@@ -89,8 +89,8 @@ def summary(file, prefixes)
       hash[w] ? hash[w] += 1 : hash[w] = 1
     end
   end
-  hash.keys.sort.each do |k|
-    puts "#{k}: #{hash[k]}"
+  hash.to_a.sort{|a,b| a[1] <=> b[1] }.reverse.each do |k, v|
+    puts "#{k}: #{v}"
   end
 end
 

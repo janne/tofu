@@ -49,7 +49,7 @@ end
 def do_todo(file, nums)
   lines = File.read(file).split("\n")
   nums = nums.map(&:to_i)
-  if nums.empty? || nums.any?{|nums| nums <= 0 || nums > lines.length}
+  if nums.empty? || nums.any?{|num| num <= 0 || num > lines.length}
     puts "Missing or invalid line numbers"
     exit 1
   end

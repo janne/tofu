@@ -16,6 +16,9 @@ describe "todo.rb" do
     `#{cmd} -h`.include?('Very simple todo CLI app').should be_true
     `#{cmd} -h`.should == `#{cmd} --help`
   end
+  it "should be able to get help text with file argument" do
+    `#{cmd} #{todo} -h`.include?('Very simple todo CLI app').should be_true
+  end
   it "should output a version" do
     `#{cmd} -v`.include?('version').should be_true
     `#{cmd} -v`.should == `#{cmd} --version`

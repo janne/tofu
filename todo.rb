@@ -57,10 +57,8 @@ end
 case ARGV[0]
 when '-h', '--help'
   help
-  exit
 when '-v', '--version'
   version
-  exit
 else
   file = ARGV[0]
   unless File.exists?(file)
@@ -68,6 +66,10 @@ else
     exit 1
   end
   case ARGV[1]
+  when '-h', '--help'
+    help
+  when '-v', '--version'
+    version
   when '-l', '--list'
     filters = ARGV[2..-1]
     list_todos(file, filters)

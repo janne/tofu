@@ -6,16 +6,16 @@ Synopsis
   Very simple todo CLI app
 
 Usage 
-  todo.rb file [args...]
+  todo.rb file a|add [args...]
   Add todo. Run without arguments to create todos from STDIN, one per line
 
-  todo.rb file -l|--list [args...]
-  List in alphanumerical order with row numbers, filter on arguments
+  todo.rb file do args
+  Complete item, row numbers as arguments
 
-  todo.rb file -cNUM|--complete=num
-  Complete item, row number as argument
+  todo.rb file [filters...]
+  List in alphanumerical order with row numbers, optional filter on arguments
 
-  todo.rb -h|--help
+  todo.rb h|help
   Displays this help message
 
 Author
@@ -46,7 +46,7 @@ if ARGV.length == 0
 end
 
 case ARGV[0]
-when '-h', '--help'
+when 'h', 'help'
   help
 else
   file = ARGV[0]
@@ -55,20 +55,17 @@ else
     exit 1
   end
   case ARGV[1]
-  when '-h', '--help'
+  when 'h', 'help'
     help
-  when '-l', '--list'
-    filters = ARGV[2..-1]
-    list_todos(file, filters)
-  when /-\w/
-    puts "Unknown option"
-    exit 1
-  else
-    text = ARGV[1..-1].join(' ')
+  when 'a', 'add'
+    text = ARGV[2..-1].join(' ')
     if text.empty?
       $stdin.read.split("\n").each{|text| add_todo(file, text)}
     else
       add_todo(file, text)
     end
+  else
+    filters = ARGV[1..-1]
+    list_todos(file, filters)
   end
 end

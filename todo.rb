@@ -2,12 +2,15 @@
 
 def help
   puts <<EOF
-Synopsis 
+Synopsis
   Very simple todo CLI app
 
-Usage 
+Usage
   todo.rb file a|add [args...]
   Add todo. Run without arguments to create todos from STDIN, one per line
+
+  todo.rb file e|edit
+  Open file in editor
 
   todo.rb file do args
   Complete item, row numbers as arguments
@@ -35,6 +38,11 @@ def add_todo(file, text)
   end
 end
 
+def open_in_editor(file)
+  editor = ENV['EDITOR'] || 'vim'
+  exec "#{editor} #{file}"
+end
+
 def list_todos(file, filters)
   lines = File.read(file).split("\n")
   lines = (1..lines.length).to_a.zip(lines)
@@ -59,6 +67,8 @@ else
   case ARGV[1]
   when 'h', 'help'
     help
+  when 'e', 'edit'
+    open_in_editor(file)
   when 'a', 'add'
     text = ARGV[2..-1].join(' ')
     if text.empty?

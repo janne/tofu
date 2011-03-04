@@ -38,6 +38,15 @@ def add_todo(file, text)
   end
 end
 
+def do_todo(file, nums)
+  lines = File.read(file).split("\n")
+  nums = nums.map(&:to_i)
+  if nums.empty? || nums.any?{|nums| nums <= 0 || nums > lines.length}
+    puts "Missing or invalid line numbers"
+    exit 1
+  end
+end
+
 def open_in_editor(file)
   editor = ENV['EDITOR'] || 'vim'
   exec "#{editor} #{file}"
@@ -70,6 +79,8 @@ else
     help
   when 'e', 'edit'
     open_in_editor(file)
+  when 'd', 'do'
+    do_todo(file, ARGV[2..-1])
   when 'a', 'add'
     text = ARGV[2..-1].join(' ')
     if text.empty?

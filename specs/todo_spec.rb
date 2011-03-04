@@ -68,6 +68,15 @@ describe "todo.rb" do
       `#{cmd} #{todo} x`.should == " 1 x\n10 x\n"
     end
   end
+
+  describe "do" do
+    it "should handle invalid line numbers" do
+      File.open(todo, 'a'){|f| f.write("todo\n") }
+      `#{cmd} #{todo} do`.should == "Missing or invalid line numbers\n"
+      `#{cmd} #{todo} do x`.should == "Missing or invalid line numbers\n"
+      `#{cmd} #{todo} do 0`.should == "Missing or invalid line numbers\n"
+      `#{cmd} #{todo} do 2`.should == "Missing or invalid line numbers\n"
+      `#{cmd} #{todo} do 1 2`.should == "Missing or invalid line numbers\n"
     end
   end
 end

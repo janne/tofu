@@ -2,17 +2,31 @@
 
 def help
   puts <<EOF
-todo.rb -h
-This help message
+Synopsis 
+  Very simple todo CLI app
 
-todo.rb file [args...]
-Add todo. Run without arguments to create todos from STDIN, one per line
+Usage 
+  todo.rb file [args...]
+  Add todo. Run without arguments to create todos from STDIN, one per line
 
-todo.rb file -l|--list [args...]
-List in alphanumerical order with row numbers, filter on arguments
+  todo.rb file -l|--list [args...]
+  List in alphanumerical order with row numbers, filter on arguments
 
-todo.rb file -cNUM|--complete=num
-Complete item, row number as argument
+  todo.rb file -cNUM|--complete=num
+  Complete item, row number as argument
+
+  todo.rb -h|--help
+  Displays this help message
+
+  todo.rb -v|--version
+  Display the version, then exit
+
+Author
+  Jan Andersson
+
+Copyright
+  Copyright (c) 2011 Jan Andersson. Licensed under the MIT License:
+  http://www.opensource.org/licenses/mit-license.php
 EOF
 end
 

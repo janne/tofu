@@ -4,6 +4,6 @@ describe "todo.rb" do
     File.executable?(cmd)
   end
   it "should output a help text" do
-    `#{cmd} -h`.include?('This help message').should be_true
+    `#{cmd} -h`.include?('Very simple todo CLI app').should be_true
   end
 end

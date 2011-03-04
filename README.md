@@ -2,17 +2,20 @@ todo.rb
 =======
 
 <pre>
-todo.rb -h
-This help message
-
-todo.rb file [args...]
+todo.rb file a|add [args...]
 Add todo. Run without arguments to create todos from STDIN, one per line
 
-todo.rb file -l|--list [args...]
-List in alphanumerical order with row numbers, filter on arguments
+todo.rb file e|edit
+Open file in editor
 
-todo.rb file -cNUM|--complete=num
-Complete item, row number as argument
+todo.rb file do args
+Complete item, row numbers as arguments
+
+todo.rb file [filters...]
+List in alphanumerical order with row numbers, optional filter on arguments
+
+todo.rb h|help
+Displays this help message
 </pre>
 
 Setup

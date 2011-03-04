@@ -44,6 +44,17 @@ end
 case ARGV[0]
   when '-h', '--help'
     help
+    exit
   when '-v', '--version'
     version
+    exit
+  else
+    file = ARGV[0]
+    text = ARGV[1..-1].join(' ')
+end
+
+unless File.exists?(file)
+  puts "No such file exists '#{file}'. Please create it first with 'touch #{file}'"
+  exit 1
+end
 end

@@ -1,5 +1,13 @@
+cmd = File.dirname(__FILE__) + "/../todo.rb"
+todo = File.dirname(__FILE__) + "/todo.txt"
+
 describe "todo.rb" do
-  cmd = File.dirname(__FILE__) + "/../todo.rb"
+  before do
+    `cp /dev/null #{todo}`
+  end
+  after do
+    `rm #{todo}`
+  end
   it "should be executable" do
     File.executable?(cmd)
   end

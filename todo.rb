@@ -18,8 +18,8 @@ Usage
   todo.rb file e|edit
   Open file in editor
 
-  todo.rb file s|summary prefix...
-  Output a summary of words beginning with prefix
+  todo.rb file c|count prefix...
+  Count words beginning with prefix
 
   todo.rb h|help
   Displays this help message
@@ -78,7 +78,7 @@ def open_in_editor(file)
   exec "#{editor} #{file}"
 end
 
-def summary(file, prefixes)
+def count_todos(file, prefixes)
   if prefixes.empty?
     puts "Missing prefix"
     exit 1
@@ -123,8 +123,8 @@ else
     open_in_editor(file)
   when 'd', 'do'
     do_todo(file, ARGV[2..-1])
-  when 's', 'summary'
-    summary(file, ARGV[2..-1])
+  when 'c', 'count'
+    count_todos(file, ARGV[2..-1])
   when 'a', 'add'
     text = ARGV[2..-1].join(' ')
     if text.empty?

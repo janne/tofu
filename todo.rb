@@ -1,28 +1,35 @@
 #!/usr/bin/env ruby
+require 'optparse'
 
-def help
-  puts <<EOF
+BASENAME = File.basename($0)
+
+def banner
+<<EOF
 Synopsis
   Very simple todo CLI app
 
 Usage
-  todo.rb file a|add [text]
+  #{BASENAME} [options] [filters...]
+  #{BASENAME} [options] command
+
+Options
+EOF
+end
+
+def commands
+<<EOF
+Commands
+  a|add [text]
   Add todo. Run without arguments to create todos from STDIN, one per line
 
-  todo.rb file [filters...]
-  List in alphanumerical order with row numbers, optional filter on arguments
+  d|do line...
+  Remove line from todo, add to done document, row numbers as arguments
 
-  todo.rb file do line...
-  Complete item, row numbers as arguments
-
-  todo.rb file e|edit
+  e|edit
   Open file in editor
 
-  todo.rb file c|count prefix...
+  c|count prefix...
   Count words beginning with prefix
-
-  todo.rb h|help
-  Displays this help message
 
 Author
   Jan Andersson
@@ -102,38 +109,43 @@ def list_todos(file, filters)
   lines.sort{|a, b| a[1] <=> b[1] }.each{|i, text| printf("%*i %s\n", length.to_s.length, i, text) }
 end
 
-if ARGV.length == 0
-  help
-  exit 1
+file = "~/todo.txt"
+opts = OptionParser.new do |opts|
+  opts.banner = banner
+  opts.on('-f', '--file FILE', 'Specify todo file') do |f|
+    file = f
+  end
+  opts.on('-h', '--help', 'Display this help') do
+    puts opts
+    exit
+  end
+
+  opts.separator ""
+  opts.separator commands
 end
 
-case ARGV[0]
-when 'h', 'help'
-  help
-else
-  file = ARGV[0]
-  unless File.exists?(file)
-    puts "No such file exists '#{file}'. You may create it with 'touch #{file}'"
-    exit 1
-  end
-  case ARGV[1]
-  when 'h', 'help'
-    help
-  when 'e', 'edit'
-    open_in_editor(file)
-  when 'd', 'do'
-    do_todo(file, ARGV[2..-1])
-  when 'c', 'count'
-    count_todos(file, ARGV[2..-1])
-  when 'a', 'add'
-    text = ARGV[2..-1].join(' ')
-    if text.empty?
-      $stdin.read.split("\n").each{|text| add_todo(file, text)}
-    else
-      add_todo(file, text)
-    end
+opts.parse!
+command = ARGV[0]
+args = ARGV[1..-1]
+
+unless File.exists?(file)
+  puts "No such file exists '#{file}'. You may create it with 'touch #{file}'"
+  exit 1
+end
+case command
+when 'e', 'edit'
+  open_in_editor(file)
+when 'd', 'do'
+  do_todo(file, args)
+when 'c', 'count'
+  count_todos(file, args)
+when 'a', 'add'
+  text = args.join(' ')
+  if text.empty?
+    $stdin.read.split("\n").each{|text| add_todo(file, text)}
   else
-    filters = ARGV[1..-1]
-    list_todos(file, filters)
+    add_todo(file, text)
   end
+else
+  list_todos(file, ARGV)
 end

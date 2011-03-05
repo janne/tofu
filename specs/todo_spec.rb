@@ -93,20 +93,20 @@ describe "todo.rb" do
     end
   end
 
-  describe "summary" do
+  describe "count" do
     it "should handle missing prefix" do
-      `#{cmd} #{todo} summary`.should == "Missing prefix\n"
+      `#{cmd_with_file} count`.should == "Missing prefix\n"
     end
     it "should handle missing chars" do
-      `#{cmd} #{todo} summary x`.should == ""
+      `#{cmd_with_file} count x`.should == ""
     end
-    it "should output a summary" do
+    it "should output result" do
       File.open(todo, 'a') {|f| f.write("todo @b\ntodo @a @b\n")}
-      `#{cmd} #{todo} summary @`.should == "@b: 2\n@a: 1\n"
+      `#{cmd_with_file} count @`.should == "@b: 2\n@a: 1\n"
     end
     it "should only hit in beginning of words" do
       File.open(todo, 'a') {|f| f.write("Kaka\nHaKaka\nHa Koko Keke\n")}
-      `#{cmd} #{todo} summary K`.should == "Kaka: 1\nKeke: 1\nKoko: 1\n"
+      `#{cmd_with_file} count K`.should == "Kaka: 1\nKeke: 1\nKoko: 1\n"
     end
   end
 end

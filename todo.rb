@@ -109,7 +109,12 @@ def list_todos(file, filters)
   lines.sort{|a, b| a[1] <=> b[1] }.each{|i, text| printf("%*i %s\n", length.to_s.length, i, text) }
 end
 
-file = "~/todo.txt"
+def file_exists?(f)
+  puts "No such file exists '#{f}'. You may create it with 'touch #{f}'" unless File.exists?(f)
+  File.exists?(f)
+end
+
+file = File.expand_path("~/todo.txt")
 opts = OptionParser.new do |opts|
   opts.banner = banner
   opts.on('-f', '--file FILE', 'Specify todo file') do |f|
@@ -128,24 +133,26 @@ opts.parse!
 command = ARGV[0]
 args = ARGV[1..-1]
 
-unless File.exists?(file)
-  puts "No such file exists '#{file}'. You may create it with 'touch #{file}'"
-  exit 1
-end
 case command
 when 'e', 'edit'
   open_in_editor(file)
 when 'd', 'do'
-  do_todo(file, args)
+  do_todo(file, args) if file_exists?(file)
 when 'c', 'count'
   count_todos(file, args)
 when 'a', 'add'
-  text = args.join(' ')
-  if text.empty?
-    $stdin.read.split("\n").each{|text| add_todo(file, text)}
-  else
-    add_todo(file, text)
+  if file_exists?(file)
+    text = args.join(' ')
+    if text.empty?
+      $stdin.read.split("\n").each{|text| add_todo(file, text)}
+    else
+      add_todo(file, text)
+    end
   end
 else
-  list_todos(file, ARGV)
+  if file_exists?(file)
+    list_todos(file, ARGV)
+  else
+    puts opts
+  end
 end

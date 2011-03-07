@@ -11,7 +11,7 @@ Synopsis
 
 Usage
   #{BASENAME} [options] [filters...]
-  #{BASENAME} [options] command
+  #{BASENAME} [options] command [args...]
 
 Options
 EOF
@@ -20,24 +20,13 @@ end
 def commands
 <<EOF
 Commands
-  a|add [text]
-  Add todo. Run without arguments to create todos from STDIN, one per line
+  add     Create todo, text from args or STDIN, one per line
+  do      Remove line from todo, add to done, row numbers from args
+  edit    Open file in editor
+  count   Count words beginning with prefixes from args
 
-  d|do line...
-  Remove line from todo, add to done document, row numbers as arguments
+List items without command, filter on args
 
-  e|edit
-  Open file in editor
-
-  c|count prefix...
-  Count words beginning with prefix
-
-Author
-  Jan Andersson
-
-Copyright
-  Copyright (c) 2011 Jan Andersson. Licensed under the MIT License:
-  http://www.opensource.org/licenses/mit-license.php
 EOF
 end
 
@@ -141,13 +130,13 @@ command = ARGV[0]
 args = ARGV[1..-1]
 
 case command
-when 'e', 'edit'
+when 'edit'
   open_in_editor(file)
-when 'd', 'do'
+when 'do'
   do_todo(file, args) if file_exists?(file)
-when 'c', 'count'
+when 'count'
   count_todos(file, args)
-when 'a', 'add'
+when 'add'
   if file_exists?(file)
     text = args.join(' ')
     if text.empty?

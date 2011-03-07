@@ -15,7 +15,7 @@ describe "todo.rb" do
     File.executable?(cmd)
   end
   it "should handle missing file" do
-    `#{cmd} -f missing_file`.should == "No such file exists 'missing_file'. You may create it with 'touch missing_file'\n"
+    `#{cmd} -f missing_file`.include?("No such file exists 'missing_file'. You may create it with 'touch missing_file'\n").should be_true
   end
 
   describe "help" do

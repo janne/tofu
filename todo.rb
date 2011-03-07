@@ -82,8 +82,8 @@ def count_todos(file, prefixes)
   end
   hash = {}
   prefixes.each do |prefix|
-    File.read(file).scan(/(^|\s)(#{prefix}\S*)/) do |pre, w|
-      hash[w] ? hash[w] += 1 : hash[w] = 1
+    File.read(file).split("\s").map(&:strip).select{|s| s.length > 1 && prefixes.any?{|p| s.index(p) == 0 } }.each do |s|
+      hash[s] ? hash[s] += 1 : hash[s] = 1
     end
   end
   hash.to_a.sort{|a,b| order = -(a[1] <=> b[1]); order == 0 ? a[0] <=> b[0] : order }.each do |k, v|

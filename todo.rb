@@ -104,7 +104,7 @@ def file_exists?(f)
   File.exists?(f)
 end
 
-if rc = ["./.todorc", "~/.todorc"].detect{|f| File.exists?(f)}
+if rc = ["./.todorc", "~/.todorc"].map{|f| File.expand_path(f)}.detect{|f| File.exists?(f)}
   file = YAML.load(File.read(rc))['file']
 else
   file = "~/todo.txt"

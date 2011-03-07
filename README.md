@@ -38,12 +38,10 @@ Setup
 -----
 Add an alias such as:
 <pre>
-alias t=~/bin/todo.rb ~/Dropbox/todo/todo.txt
+alias t=~/bin/todo.rb -f ~/Dropbox/todo/todo.txt
 </pre>
 
-Tips
-----
-Add multiple aliases for other lists:
+You may add more aliases for other lists:
 <pre>
-alias w=~/bin/todo.rb ~/Dropbox/todo/work.txt
+alias w=~/bin/todo.rb -f ~/Dropbox/todo/work.txt
 </pre>

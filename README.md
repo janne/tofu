@@ -2,20 +2,36 @@ todo.rb
 =======
 
 <pre>
-todo.rb file a|add [args...]
-Add todo. Run without arguments to create todos from STDIN, one per line
+Synopsis
+  Very simple todo CLI app
 
-todo.rb file e|edit
-Open file in editor
+Usage
+  todo.rb [options] [filters...]
+  todo.rb [options] command
 
-todo.rb file do args
-Complete item, row numbers as arguments
+Options
+    -f, --file FILE                  Specify todo file
+    -h, --help                       Display this help
 
-todo.rb file [filters...]
-List in alphanumerical order with row numbers, optional filter on arguments
+Commands
+  a|add [text]
+  Add todo. Run without arguments to create todos from STDIN, one per line
 
-todo.rb h|help
-Displays this help message
+  d|do line...
+  Remove line from todo, add to done document, row numbers as arguments
+
+  e|edit
+  Open file in editor
+
+  c|count prefix...
+  Count words beginning with prefix
+
+Author
+  Jan Andersson
+
+Copyright
+  Copyright (c) 2011 Jan Andersson. Licensed under the MIT License:
+  http://www.opensource.org/licenses/mit-license.php
 </pre>
 
 Setup

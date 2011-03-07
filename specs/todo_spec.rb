@@ -42,7 +42,7 @@ describe "todo.rb" do
     it "should be able to add items" do
       `#{cmd_with_file} add my data`.should == "Added 'my data' to line 1\n"
       File.read(todo).include?('my data').should be_true
-      `#{cmd_with_file} a more data`.should == "Added 'more data' to line 2\n"
+      `#{cmd_with_file} add more data`.should == "Added 'more data' to line 2\n"
       File.read(todo).include?('more data').should be_true
     end
   end

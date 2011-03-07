@@ -18,6 +18,20 @@ describe "todo.rb" do
     `#{cmd} -f missing_file`.include?("No such file exists 'missing_file'. You may create it with 'touch missing_file'\n").should be_true
   end
 
+  describe ".todorc" do
+    before do
+      `echo "hello" > temp.txt`
+      `echo "file: temp.txt" > .todorc`
+    end
+    it "should use todorc" do
+      `#{cmd}`.should == "1 hello\n"
+    end
+    after do
+      `rm temp.txt`
+      `rm .todorc`
+    end
+  end
+
   describe "help" do
     it "should output a help text" do
       `#{cmd} -h`.include?('Very simple todo CLI app').should be_true

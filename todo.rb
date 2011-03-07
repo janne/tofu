@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'optparse'
+require 'yaml'
 
 BASENAME = File.basename($0)
 
@@ -114,7 +115,13 @@ def file_exists?(f)
   File.exists?(f)
 end
 
-file = File.expand_path("~/todo.txt")
+if rc = ["./.todorc", "~/.todorc"].detect{|f| File.exists?(f)}
+  file = YAML.load(File.read(rc))['file']
+else
+  file = "~/todo.txt"
+end
+file = File.expand_path(file)
+
 opts = OptionParser.new do |opts|
   opts.banner = banner
   opts.on('-f', '--file FILE', 'Specify todo file') do |f|

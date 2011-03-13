@@ -1,5 +1,5 @@
-todo.rb
-=======
+Tofu
+====
 
 <pre>
 Synopsis
@@ -25,7 +25,7 @@ List items without command, filter on args
 Installation
 ------------
 <pre>
-sudo curl https://github.com/janne/todo.rb/raw/master/todo.rb > ~/usr/local/bin/t
+sudo curl https://github.com/janne/tofu/raw/master/tofu > ~/usr/local/bin/t
 sudo chmod +x ~/usr/local/bin/t
 </pre>
 

@@ -1,9 +1,9 @@
-cmd = File.dirname(__FILE__) + "/../todo.rb"
+cmd = File.dirname(__FILE__) + "/../tofu"
 todo = File.dirname(__FILE__) + "/todo.txt"
 cmd_with_file = "#{cmd} -f #{todo}"
 done = File.dirname(__FILE__) + "/done.todo.txt"
 
-describe "todo.rb" do
+describe "tofu" do
   before do
     `cp /dev/null #{todo}`
   end

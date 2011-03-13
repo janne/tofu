@@ -2,48 +2,12 @@
 require 'optparse'
 require 'yaml'
 
-BASENAME = File.basename($0)
-
-def banner
-<<EOF
-Synopsis
-  Very simple todo CLI app
-
-Usage
-  #{BASENAME} [options] [filters...]
-  #{BASENAME} [options] command [args...]
-
-Options
-EOF
-end
-
-def commands
-<<EOF
-Commands
-  add     Create todo, text from args or STDIN, one per line
-  do      Remove line from todo, add to done, row numbers from args
-  edit    Open file in editor
-  count   Count words beginning with prefixes from args
-
-List items without command, filter on args
-
-EOF
-end
-
 def add_todo(file, text)
   length = File.read(file).split("\n").length
   File.open(file, 'a') do |f|
     printf(f, "%s\n", text)
     printf("Added '%s' to line %i\n", text, length + 1)
   end
-end
-
-def done_file(file)
-  File.dirname(file) + "/done." + File.basename(file)
-end
-
-def today
-  Time.new.strftime("%Y-%m-%d")
 end
 
 def do_todo(file, nums)
@@ -53,10 +17,10 @@ def do_todo(file, nums)
     puts "Missing or invalid line numbers"
     exit 1
   end
-  File.open(done_file(file), 'a') do |f|
+  File.open(File.dirname(file) + "/done." + File.basename(file), 'a') do |f|
     nums.each do |num|
       text = lines[num-1]
-      printf(f, "x #{today} #{text}\n")
+      printf(f, "x #{Time.new.strftime("%Y-%m-%d")} #{text}\n")
       puts "Marked '#{text}' as done"
     end
   end
@@ -112,7 +76,14 @@ end
 file = File.expand_path(file)
 
 opts = OptionParser.new do |opts|
-  opts.banner = banner
+  opts.banner = "Synopsis
+  Very simple todo CLI app
+
+Usage
+  #{File.basename($0)} [options] [filters...]
+  #{File.basename($0)} [options] command [args...]
+
+Options"
   opts.on('-f', '--file FILE', 'Specify todo file') do |f|
     file = f
   end
@@ -122,7 +93,13 @@ opts = OptionParser.new do |opts|
   end
 
   opts.separator ""
-  opts.separator commands
+  opts.separator "Commands"
+  opts.separator "  add     Create todo, text from args or STDIN, one per line"
+  opts.separator "  do      Remove line from todo, add to done, row numbers from args"
+  opts.separator "  edit    Open file in editor"
+  opts.separator "  count   Count words beginning with prefixes from args"
+  opts.separator ""
+  opts.separator "List items without command, filter on args"
 end
 
 opts.parse!

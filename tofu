@@ -77,14 +77,15 @@ class Tofu
 
   def self.option_parser
     OptionParser.new do |opts|
-      opts.banner = "Synopsis
-      Very simple todo CLI app
+      opts.banner = <<EOF
+Very simple todo CLI app
 
-    Usage
-      #{File.basename($0)} [options] [filters...]
-      #{File.basename($0)} [options] command [args...]
+Usage
+  #{File.basename($0)} [options] [filters...]
+  #{File.basename($0)} [options] command [args...]
 
-    Options"
+Options
+EOF
       opts.on('-f', '--file FILE', 'Specify todo file') do |f|
         @file = f
       end

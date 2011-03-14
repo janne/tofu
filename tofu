@@ -103,7 +103,7 @@ EOF
   end
 
   def self.run
-    if rc = ["./.todorc", "~/.todorc"].map{|f| File.expand_path(f)}.detect{|f| File.exists?(f)}
+    if rc = ["./.tofurc", "~/.tofurc"].map{|f| File.expand_path(f)}.detect{|f| File.exists?(f)}
       @file = File.expand_path(YAML.load(File.read(rc))['file'])
     else
       @file = File.expand_path("~/todo.txt")

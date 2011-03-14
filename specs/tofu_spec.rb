@@ -18,17 +18,17 @@ describe "tofu" do
     `#{cmd} -f missing_file`.include?("No such file exists 'missing_file'. You may create it with 'touch missing_file'\n").should be_true
   end
 
-  describe ".todorc" do
+  describe ".tofurc" do
     before do
       `echo "hello" > temp.txt`
-      `echo "file: temp.txt" > .todorc`
+      `echo "file: temp.txt" > .tofurc`
     end
-    it "should use todorc" do
+    it "should use tofurc" do
       `#{cmd}`.should == "1 hello\n"
     end
     after do
       `rm temp.txt`
-      `rm .todorc`
+      `rm .tofurc`
     end
   end
 

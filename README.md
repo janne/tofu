@@ -6,8 +6,8 @@ Synopsis
   Very simple todo CLI app
 
 Usage
-  t [options] [filters...]
-  t [options] command [args...]
+  tofu [options] [filters...]
+  tofu [options] command [args...]
 
 Options
     -f, --file FILE                  Specify todo file
@@ -25,19 +25,19 @@ List items without command, filter on args
 Installation
 ------------
 <pre>
-sudo curl https://github.com/janne/tofu/raw/master/tofu > ~/usr/local/bin/t
-sudo chmod +x ~/usr/local/bin/t
+sudo curl https://github.com/janne/tofu/raw/master/tofu > ~/usr/local/bin/tofu
+sudo chmod +x ~/usr/local/bin/tofu
 </pre>
 
 Configuration
 -------------
 The default location for the todo file is todo.txt in the home directory. If
-another location is preferred, create a file called ".todorc" in the current
+another location is preferred, create a file called ".tofurc" in the current
 directory or the home directory, such as:
 
 <pre>
-echo "file: ~/Dropbox/todo/todo.txt > ~/.todorc"
-touch ~/Dropbox/todo/todo.txt
+echo "file: ~/Dropbox/tofu/todo.txt > ~/.tofurc"
+touch ~/Dropbox/tofu/todo.txt
 </pre>
 
 Tips and tricks
@@ -45,14 +45,14 @@ Tips and tricks
 To handle multiple lists, add an alias with a defined todo file:
 
 <pre>
-alias w=/usr/local/bin/t -f ~/Dropbox/todo/work.txt
+alias w=/usr/local/bin/tofu -f ~/Dropbox/tofu/work.txt
 </pre>
 
 To handle a todo list for a development project, add a todo file and a local
-.todorc. Any t command used in that directory is now using the local todo file.
+.tofurc. Any tofu command used in that directory is now using the local todo file.
 
 <pre>
-echo "file: todo.txt" > .todorc
+echo "file: todo.txt" > .tofurc
 </pre>
 
 You may wish to add context for items with the character @, such as "Call mom
@@ -60,13 +60,13 @@ You may wish to add context for items with the character @, such as "Call mom
 your items:
 
 <pre>
-t @phone
+tofu @phone
 </pre>
 
 You can later get an overview of all your contexts with the command:
 
 <pre>
-t count @
+tofu count @
 </pre>
 
 Likewise the character + may be used for projects, adding things like "Order
@@ -75,7 +75,7 @@ flowers +wedding".
 You may then get a summary of both contexts and projects with:
 
 <pre>
-t count + @
+tofu count + @
 </pre>
 
 Author

@@ -56,10 +56,8 @@ class Tofu
       exit 1
     end
     hash = {}
-    args.each do |prefix|
-      File.read(@file).split("\s").map(&:strip).select{|s| s.length > 1 && args.any?{|p| s.index(p) == 0 } }.each do |s|
-        hash[s] ? hash[s] += 1 : hash[s] = 1
-      end
+    File.read(@file).split("\s").map(&:strip).select{|s| s.length > 1 && args.any?{|p| s.index(p) == 0 } }.each do |s|
+      hash[s] ? hash[s] += 1 : hash[s] = 1
     end
     hash.to_a.sort{|a,b| order = -(a[1] <=> b[1]); order == 0 ? a[0] <=> b[0] : order }.each do |k, v|
       puts "#{k}: #{v}"

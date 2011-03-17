@@ -69,7 +69,10 @@ class Tofu
     lines = File.read(@file).split("\n")
     length = lines.length
     lines = (1..lines.length).to_a.zip(lines)
-    lines = lines.select{|i, line| filters.all?{|filter| line.include?(filter)}} unless filters.empty?
+    unless filters.empty?
+      lines = lines.select{|i, line| filters.all?{|filter| line.include?(filter)}} 
+      puts "Nothing found" if lines.empty?
+    end
     lines.sort{|a, b| a[1] <=> b[1] }.each{|i, text| printf("%*i %s\n", length.to_s.length, i, text) }
   end
 

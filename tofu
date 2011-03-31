@@ -22,6 +22,22 @@ class Tofu
     end
   end
 
+  command 'archive', 'Archive all done items and sort remaining items' do
+    lines = File.read(@file).split("\n")
+    archived = 0
+    File.open(File.dirname(@file) + "/done." + File.basename(@file), 'a') do |f|
+      lines.select{|line| line.match(/^[xX]\s/) }.each do |line|
+        f.printf("%s\n", line)
+        archived += 1
+      end
+    end
+    File.open(@file + '.tmp', 'w') do |f|
+      f.printf("%s\n", lines.reject{|line| line.match(/^[xX]\s/) }.sort.join("\n"))
+    end
+    `mv #{@file + '.tmp'} #{@file}`
+    puts "Archived #{archived} item#{'s' unless archived == 1}"
+  end
+
   command 'do', 'Remove line from todo, add to done, row numbers from args' do |args|
     lines = File.read(@file).split("\n")
     nums = args.map(&:to_i)

@@ -106,10 +106,13 @@ class TofuTest < Test::Unit::TestCase
     assert_equal "", `#{@cmd_with_file}`
   end
 
+  # ARCHIVE
+
   def test_put_done_items_in_done_file
     File.open(@todo_file, 'a') {|f| f.write("todo\n")}
-    assert_equal `#{@cmd_with_file} do 1`, "Marked 'todo' as done\n"
-    assert File.read(@done_file).include?('todo')
+    `#{@cmd_with_file} do 1`
+    assert_equal "Archived 1 item\n", `#{@cmd_with_file} archive`
+    assert_equal "x #{@date} todo\n", File.read(@done_file)
     assert !File.exists?(@todo_file + '.tmp')
   end
 

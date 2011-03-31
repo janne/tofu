@@ -67,6 +67,10 @@ class TofuTest < Test::Unit::TestCase
     assert_equal `#{@cmd_with_file} z k`, "3 klz\n"
   end
 
+  def test_list_and_filter_without_results
+    assert_equal `#{@cmd_with_file} foo`, "Nothing found\n"
+  end
+
   def test_space_pad_line_numbers
     File.open(@todo_file, 'a') do |f|
       10.times { f.write("a\n") }

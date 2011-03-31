@@ -26,7 +26,7 @@ class TofuTest < Test::Unit::TestCase
   def test_tofurc
     `echo "hello" > temp.txt`
     `echo "file: temp.txt" > .tofurc`
-    assert_equal `#{@cmd}`, "1 hello\n"
+    assert_equal "1 hello\n", `#{@cmd}`
     `rm temp.txt`
     `rm .tofurc`
   end
@@ -40,9 +40,9 @@ class TofuTest < Test::Unit::TestCase
   # ADD
 
   def test_add
-    assert_equal `#{@cmd_with_file} add my data`, "Added 'my data' to line 1\n"
+    assert_equal "Added 'my data' to line 1\n", `#{@cmd_with_file} add my data`
     assert File.read(@todo_file).include?('my data')
-    assert_equal `#{@cmd_with_file} add more data`, "Added 'more data' to line 2\n"
+    assert_equal "Added 'more data' to line 2\n", `#{@cmd_with_file} add more data`
     assert File.read(@todo_file).include?('more data')
   end
 
@@ -54,7 +54,7 @@ class TofuTest < Test::Unit::TestCase
       f.write("abc\n")
       f.write("klm\n")
     end
-    assert_equal `#{@cmd_with_file}`, "2 abc\n3 klm\n1 xyz\n"
+    assert_equal "2 abc\n3 klm\n1 xyz\n", `#{@cmd_with_file}`
   end
 
   def test_list_and_filter
@@ -63,19 +63,19 @@ class TofuTest < Test::Unit::TestCase
       f.write("abc\n")
       f.write("klz\n")
     end
-    assert_equal `#{@cmd_with_file} z`, "3 klz\n1 xyz\n"
-    assert_equal `#{@cmd_with_file} z k`, "3 klz\n"
+    assert_equal "3 klz\n1 xyz\n", `#{@cmd_with_file} z`
+    assert_equal "3 klz\n", `#{@cmd_with_file} z k`
   end
 
   def test_list_and_filter_without_results
-    assert_equal `#{@cmd_with_file} foo`, "Nothing found\n"
+    assert_equal "Nothing found\n", `#{@cmd_with_file} foo`
   end
 
   def test_space_pad_line_numbers
     File.open(@todo_file, 'a') do |f|
       10.times { f.write("a\n") }
     end
-    assert_equal `#{@cmd_with_file}`, " 1 a\n 2 a\n 3 a\n 4 a\n 5 a\n 6 a\n 7 a\n 8 a\n 9 a\n10 a\n"
+    assert_equal " 1 a\n 2 a\n 3 a\n 4 a\n 5 a\n 6 a\n 7 a\n 8 a\n 9 a\n10 a\n", `#{@cmd_with_file}`
   end
 
   def test_should_space_pad_line_numbers_correctly_with_filter
@@ -84,18 +84,18 @@ class TofuTest < Test::Unit::TestCase
       8.times { f.write("a\n") }
       f.write("x\n")
     end
-    assert_equal `#{@cmd_with_file} x`, " 1 x\n10 x\n"
+    assert_equal " 1 x\n10 x\n", `#{@cmd_with_file} x`
   end
 
   # DO
 
   def test_invalid_line_numbers
     File.open(@todo_file, 'a') {|f| f.write("todo\n")}
-    assert_equal `#{@cmd_with_file} do`, "Missing or invalid line numbers\n"
-    assert_equal `#{@cmd_with_file} do x`, "Missing or invalid line numbers\n"
-    assert_equal `#{@cmd_with_file} do 0`, "Missing or invalid line numbers\n"
-    assert_equal `#{@cmd_with_file} do 2`, "Missing or invalid line numbers\n"
-    assert_equal `#{@cmd_with_file} do 1 2`, "Missing or invalid line numbers\n"
+    assert_equal "Missing or invalid line numbers\n", `#{@cmd_with_file} do`
+    assert_equal "Missing or invalid line numbers\n", `#{@cmd_with_file} do x`
+    assert_equal "Missing or invalid line numbers\n", `#{@cmd_with_file} do 0`
+    assert_equal "Missing or invalid line numbers\n", `#{@cmd_with_file} do 2`
+    assert_equal "Missing or invalid line numbers\n", `#{@cmd_with_file} do 1 2`
   end
 
   def test_remove_done_items_from_todo_file
@@ -115,19 +115,19 @@ class TofuTest < Test::Unit::TestCase
 
   def test_count
     File.open(@todo_file, 'a') {|f| f.write("todo @b\ntodo @a @b\n")}
-    assert_equal `#{@cmd_with_file} count @`, "@b: 2\n@a: 1\n"
+    assert_equal "@b: 2\n@a: 1\n", `#{@cmd_with_file} count @`
   end
 
   def test_missing_prefix
-    assert_equal `#{@cmd_with_file} count`, "Missing prefix\n"
+    assert_equal "Missing prefix\n", `#{@cmd_with_file} count`
   end
 
   def test_missing_chars
-    assert_equal `#{@cmd_with_file} count x`, ""
+    assert_equal "", `#{@cmd_with_file} count x`
   end
 
   def test_middle_of_words
     File.open(@todo_file, 'a') {|f| f.write("Kaka\nHaKaka\nHa Koko Keke\n")}
-    assert_equal `#{@cmd_with_file} count K`, "Kaka: 1\nKeke: 1\nKoko: 1\n"
+    assert_equal "Kaka: 1\nKeke: 1\nKoko: 1\n", `#{@cmd_with_file} count K`
   end
 end

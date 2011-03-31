@@ -111,7 +111,7 @@ EOF
 
       opts.separator ""
       opts.separator "Commands"
-      @command_help.each{|h| opts.separator h }
+      @command_help.sort.each{|h| opts.separator h }
       opts.separator ""
       opts.separator "List items without command, filter on args"
     end

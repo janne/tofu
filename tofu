@@ -29,16 +29,12 @@ class Tofu
       puts "Missing or invalid line numbers"
       exit 1
     end
-    File.open(File.dirname(@file) + "/done." + File.basename(@file), 'a') do |f|
-      nums.each do |num|
-        text = lines[num-1]
-        printf(f, "x #{Time.new.strftime("%Y-%m-%d")} #{text}\n")
-        puts "Marked '#{text}' as done"
-      end
-    end
     File.open(@file + '.tmp', 'w') do |f|
       lines.each_with_index do |line, i|
-        unless nums.include?(i+1)
+        if nums.include?(i+1)
+          f.printf("x #{Time.new.strftime("%Y-%m-%d")} %s\n", line)
+          puts "Marked '#{line}' as done"
+        else
           f.printf("%s\n", line)
         end
       end
@@ -70,6 +66,7 @@ class Tofu
     lines = File.read(@file).split("\n")
     length = lines.length
     lines = (1..lines.length).to_a.zip(lines)
+    lines = lines.select{|i, line| !line.match(/^[xX]\s/)}
     unless filters.empty?
       lines = lines.select{|i, line| filters.all?{|filter| line.include?(filter)}} 
       puts "Nothing found" if lines.empty?

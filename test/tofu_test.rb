@@ -6,6 +6,7 @@ class TofuTest < Test::Unit::TestCase
     @todo_file = File.dirname(__FILE__) + "/todo.txt"
     @cmd_with_file = "#{@cmd} -f #{@todo_file}"
     @done_file = File.dirname(__FILE__) + "/done.todo.txt"
+    @date = Time.new.strftime('%Y-%m-%d')
 
     `cp /dev/null #{@todo_file}`
   end
@@ -98,10 +99,11 @@ class TofuTest < Test::Unit::TestCase
     assert_equal "Missing or invalid line numbers\n", `#{@cmd_with_file} do 1 2`
   end
 
-  def test_remove_done_items_from_todo_file
+  def test_mark_done_items_in_todo_file
     File.open(@todo_file, 'a') {|f| f.write("todo\n")}
-    assert_equal `#{@cmd_with_file} do 1`, "Marked 'todo' as done\n"
-    assert_equal `#{@cmd_with_file}`, ""
+    assert_equal "Marked 'todo' as done\n", `#{@cmd_with_file} do 1`
+    assert_equal "x #{@date} todo\n", File.read(@todo_file)
+    assert_equal "", `#{@cmd_with_file}`
   end
 
   def test_put_done_items_in_done_file

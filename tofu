@@ -5,7 +5,8 @@ require 'yaml'
 class Tofu
   def self.command(command, help = nil, &block)
     @command_help ||= []
-    @command_help << "  #{command}\t\t#{help}" if help
+    spaces = " " * (10-command.length)
+    @command_help << "  #{command}#{spaces}#{help}" if help
     @commands ||= {}
     @commands[command] = block
   end

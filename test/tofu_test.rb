@@ -97,6 +97,8 @@ class TofuTest < Test::Unit::TestCase
     assert_equal "Missing or invalid line numbers\n", `#{@cmd_with_file} do 0`
     assert_equal "Missing or invalid line numbers\n", `#{@cmd_with_file} do 2`
     assert_equal "Missing or invalid line numbers\n", `#{@cmd_with_file} do 1 2`
+    `#{@cmd_with_file} do 1`
+    assert_equal "Missing or invalid line numbers\n", `#{@cmd_with_file} do 1`
   end
 
   def test_mark_done_items_in_todo_file

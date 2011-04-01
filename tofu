@@ -41,7 +41,7 @@ class Tofu
   command 'do', 'Remove line from todo, add to done, row numbers from args' do |args|
     lines = File.read(@file).split("\n")
     nums = args.map(&:to_i)
-    if nums.empty? || nums.any?{|num| num <= 0 || num > lines.length}
+    if nums.empty? || nums.any?{|num| num <= 0 || num > lines.length || lines[num-1].match(/^[xX]\s/)}
       puts "Missing or invalid line numbers"
       exit 1
     end

@@ -11,6 +11,14 @@ class Tofu
     @commands[command] = block
   end
 
+  def self.done_file
+    File.dirname(@file) + "/done." + File.basename(@file)
+  end
+
+  def self.done_regexp
+    /^[xX]\s/
+  end
+
   command 'add', 'Create todo, text from args or STDIN, one per line' do |args|
     texts = args.empty? ? $stdin.read.split("\n") : [args.join(' ')]
     texts.each do |text|
@@ -25,14 +33,14 @@ class Tofu
   command 'archive', 'Archive all done items and sort remaining items' do
     lines = File.read(@file).split("\n")
     archived = 0
-    File.open(File.dirname(@file) + "/done." + File.basename(@file), 'a') do |f|
-      lines.select{|line| line.match(/^[xX]\s/) }.each do |line|
+    File.open(done_file, 'a') do |f|
+      lines.select{|line| line =~ done_regexp }.each do |line|
         f.printf("%s\n", line)
         archived += 1
       end
     end
     File.open(@file + '.tmp', 'w') do |f|
-      f.printf("%s\n", lines.reject{|line| line.match(/^[xX]\s/) }.sort.join("\n"))
+      f.printf("%s\n", lines.reject{|line| line =~ done_regexp }.sort.join("\n"))
     end
     `mv #{@file + '.tmp'} #{@file}`
     puts "Archived #{archived} item#{'s' unless archived == 1}"
@@ -41,7 +49,7 @@ class Tofu
   command 'do', 'Remove line from todo, add to done, row numbers from args' do |args|
     lines = File.read(@file).split("\n")
     nums = args.map(&:to_i)
-    if nums.empty? || nums.any?{|num| num <= 0 || num > lines.length || lines[num-1].match(/^[xX]\s/)}
+    if nums.empty? || nums.any?{|num| num <= 0 || num > lines.length || lines[num-1] =~ done_regexp }
       puts "Missing or invalid line numbers"
       exit 1
     end
@@ -82,7 +90,7 @@ class Tofu
     lines = File.read(@file).split("\n")
     length = lines.length
     lines = (1..lines.length).to_a.zip(lines)
-    lines = lines.select{|i, line| !line.match(/^[xX]\s/)}
+    lines = lines.reject{|i, line| line =~ done_regexp}
     unless filters.empty?
       lines = lines.select{|i, line| filters.all?{|filter| line.include?(filter)}} 
       puts "Nothing found" if lines.empty?

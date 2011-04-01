@@ -110,7 +110,7 @@ class TofuTest < Test::Unit::TestCase
 
   # ARCHIVE
 
-  def test_put_done_items_in_done_file
+  def test_archive
     File.open(@todo_file, 'a') {|f| f.write("todo\n")}
     `#{@cmd_with_file} do 1`
     assert_equal "Archived 1 item\n", `#{@cmd_with_file} archive`

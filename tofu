@@ -66,6 +66,16 @@ class Tofu
     end
   end
 
+  command 'done', 'List done items, both archived and unarchived' do
+    lines = File.read(@file).split("\n") + File.read(done_file).split("\n")
+    lines = lines.select{|line| line =~ done_regexp}
+    if lines.empty?
+      puts "Nothing found"
+    else
+      puts lines.sort
+    end
+  end
+
   command 'edit', 'Open file in editor' do
     editor = ENV['EDITOR'] || 'vim'
     exec "#{editor} #{@file}"

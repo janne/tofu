@@ -144,4 +144,13 @@ class TofuTest < Test::Unit::TestCase
     File.open(@todo_file, 'a') {|f| f.write("Kaka\nHaKaka\nHa Koko Keke\n")}
     assert_equal "Kaka: 1\nKeke: 1\nKoko: 1\n", `#{@cmd_with_file} count K`
   end
+
+  # DONE
+  def test_done
+    File.open(@todo_file, 'a') {|f| f.write("todo 1\ntodo 2\n")}
+    `#{@cmd_with_file} do 1`
+    `#{@cmd_with_file} archive`
+    `#{@cmd_with_file} do 1`
+    assert_equal "x #{@date} todo 1\nx #{@date} todo 2\n", `#{@cmd_with_file} done`
+  end
 end

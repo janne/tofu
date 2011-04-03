@@ -6,7 +6,7 @@ class TofuTest < Test::Unit::TestCase
     @todo_file = File.dirname(__FILE__) + "/todo.txt"
     @cmd_with_file = "#{@cmd} -f #{@todo_file}"
     @done_file = File.dirname(__FILE__) + "/done.todo.txt"
-    @date = Time.new.strftime('%Y-%m-%d')
+    @today = Time.new.strftime('%Y-%m-%d')
 
     `cp /dev/null #{@todo_file}`
   end
@@ -104,7 +104,7 @@ class TofuTest < Test::Unit::TestCase
   def test_mark_done_items_in_todo_file
     File.open(@todo_file, 'a') {|f| f.write("todo\n")}
     assert_equal "Marked 'todo' as done\n", `#{@cmd_with_file} do 1`
-    assert_equal "x #{@date} todo\n", File.read(@todo_file)
+    assert_equal "x #{@today} todo\n", File.read(@todo_file)
     assert_equal "", `#{@cmd_with_file}`
   end
 
@@ -114,7 +114,7 @@ class TofuTest < Test::Unit::TestCase
     File.open(@todo_file, 'a') {|f| f.write("todo\n")}
     `#{@cmd_with_file} do 1`
     assert_equal "Archived 1 item\n", `#{@cmd_with_file} archive`
-    assert_equal "x #{@date} todo\n", File.read(@done_file)
+    assert_equal "x #{@today} todo\n", File.read(@done_file)
     assert !File.exists?(@todo_file + '.tmp')
   end
 
@@ -151,6 +151,6 @@ class TofuTest < Test::Unit::TestCase
     `#{@cmd_with_file} do 1`
     `#{@cmd_with_file} archive`
     `#{@cmd_with_file} do 1`
-    assert_equal "x #{@date} todo 1\nx #{@date} todo 2\n", `#{@cmd_with_file} done`
+    assert_equal "x #{@today} todo 1\nx #{@today} todo 2\n", `#{@cmd_with_file} done`
   end
 end

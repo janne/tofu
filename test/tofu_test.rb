@@ -125,6 +125,18 @@ class TofuTest < Test::Unit::TestCase
     assert_equal "1 aaa\n2 bbb\n", `#{@cmd_with_file}`
   end
 
+  def test_adding_archive_date
+    File.open(@todo_file, 'a') {|f| f.write("X todo\n")}
+    `#{@cmd_with_file} archive`
+    assert File.read(@done_file) == "x #{@today} todo\n"
+  end
+
+  def test_keeping_archive_date
+    File.open(@todo_file, 'a') {|f| f.write("X 2011-01-01 todo\n")}
+    `#{@cmd_with_file} archive`
+    assert File.read(@done_file) == "x 2011-01-01 todo\n"
+  end
+
   # COUNT
 
   def test_count

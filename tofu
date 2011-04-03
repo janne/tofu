@@ -46,7 +46,11 @@ class Tofu
     archived = 0
     File.open(done_file, 'a') do |f|
       items.select{|item| item =~ done_regexp }.each do |item|
-        f.printf("%s\n", item)
+        if (m = item.match(/^[xX]\s+(\d{4}-\d{2}-\d{2})\s(.*)$/))
+          f.printf("x %s\n", item[2..-1])
+        else
+          f.printf("x %s %s\n", today, item[2..-1])
+        end
         archived += 1
       end
     end

@@ -118,7 +118,7 @@ class TofuTest < Test::Unit::TestCase
     assert !File.exists?(@todo_file + '.tmp')
   end
 
-  def test_sorting_items
+  def test_sorting_items_after_archive
     File.open(@todo_file, 'a') {|f| f.write("bbb\naaa\n")}
     assert_equal "2 aaa\n1 bbb\n", `#{@cmd_with_file}`
     assert_equal "Archived 0 items\n", `#{@cmd_with_file} archive`

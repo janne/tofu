@@ -15,6 +15,10 @@ class Tofu
     @@file
   end
 
+  def self.today
+    Time.new.strftime("%Y-%m-%d")
+  end
+
   def self.items
     @@items ||= File.read(file).split("\n")
   end
@@ -62,7 +66,7 @@ class Tofu
     File.open(file + '.tmp', 'w') do |f|
       items.each_with_index do |item, i|
         if nums.include?(i+1)
-          f.printf("x #{Time.new.strftime("%Y-%m-%d")} %s\n", item)
+          f.printf("x #{today} %s\n", item)
           puts "Marked '#{item}' as done"
         else
           f.printf("%s\n", item)

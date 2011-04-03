@@ -80,12 +80,17 @@ class Tofu
     end
   end
 
-  command 'done', 'List done items, both archived and unarchived' do
-    done_items = items.select{|item| item =~ done_regexp } + File.read(done_file).split("\n")
-    if done_items.empty?
-      puts "Nothing found"
+  command 'done', 'List (or edit) done items' do |args|
+    if args.first == 'edit'
+      editor = ENV['EDITOR'] || 'vim'
+      exec "#{editor} #{done_file}"
     else
-      puts done_items.sort
+      done_items = items.select{|item| item =~ done_regexp } + File.read(done_file).split("\n")
+      if done_items.empty?
+        puts "Nothing found"
+      else
+        puts done_items.sort
+      end
     end
   end
 

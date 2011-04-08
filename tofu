@@ -23,6 +23,10 @@ class Tofu
     @@items ||= File.read(file).split("\n")
   end
 
+  def self.done_items
+    @@done_items ||= items.select{|item| item =~ done_regexp } + File.read(done_file).split("\n")
+  end
+
   def self.done_file
     File.dirname(file) + "/done." + File.basename(file)
   end
@@ -80,23 +84,9 @@ class Tofu
     end
   end
 
-  command 'done', 'List (or edit) done items' do |args|
-    if args.first == 'edit'
-      editor = ENV['EDITOR'] || 'vim'
-      exec "#{editor} #{done_file}"
-    else
-      done_items = items.select{|item| item =~ done_regexp } + File.read(done_file).split("\n")
-      if done_items.empty?
-        puts "Nothing found"
-      else
-        puts done_items.sort
-      end
-    end
-  end
-
   command 'edit', 'Open file in editor' do
     editor = ENV['EDITOR'] || 'vim'
-    exec "#{editor} #{file}"
+    exec "#{editor} #{@@done ? done_file : file}"
   end
 
   command 'count', 'Count words beginning with prefixes from args' do |args|
@@ -115,13 +105,14 @@ class Tofu
 
   command 'list' do
     filters = ARGV
-    row_items = (1..items.length).to_a.zip(items)
-    row_items = row_items.reject{|row, item| item =~ done_regexp}
+    list = @@done ? done_items : items
+    row_items = (1..list.length).to_a.zip(list)
+    row_items = row_items.reject{|row, item| item =~ done_regexp} unless @@done
     unless filters.empty?
       row_items = row_items.select{|row, item| filters.all?{|filter| item.include?(filter)}}
       puts "Nothing found" if row_items.empty?
     end
-    row_items.sort{|a, b| a[1] <=> b[1] }.each{|row, item| printf("%*i %s\n", items.length.to_s.length, row, item) }
+    row_items.sort{|a, b| a[1] <=> b[1] }.each{|row, item| @@done ? puts(item) : printf("%*i %s\n", list.length.to_s.length, row, item) }
   end
 
   def self.option_parser
@@ -137,6 +128,9 @@ Options
 EOF
       opts.on('-f', '--file FILE', 'Specify todo file') do |f|
         @@file = f
+      end
+      opts.on('-d', '--done', 'Run command on done items') do
+        @@done = true
       end
       opts.on('-h', '--help', 'Display this help') do
         puts opts
@@ -157,6 +151,7 @@ EOF
     else
       @@file = File.expand_path("~/todo.txt")
     end
+    @@done = false
     opts = option_parser
     opts.parse!
     if File.exists?(file)

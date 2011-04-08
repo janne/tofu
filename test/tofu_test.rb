@@ -159,6 +159,11 @@ class TofuTest < Test::Unit::TestCase
     assert_equal "@b: 2\n@a: 1\n", `#{@cmd_with_file} count @`
   end
 
+  def test_count_done
+    File.open(@todo_file, 'a') {|f| f.write("todo @b\nx #{@today} todo @a @b\n")}
+    assert_equal "@a: 1\n@b: 1\n", `#{@cmd_with_file} count --done @`
+  end
+
   def test_missing_prefix
     assert_equal "Missing prefix\n", `#{@cmd_with_file} count`
   end

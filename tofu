@@ -24,7 +24,11 @@ class Tofu
   end
 
   def self.done_items
-    @@done_items ||= items.select{|item| item =~ done_regexp } + File.read(done_file).split("\n")
+    @@done_items ||= items.select{|item| item =~ done_regexp } + (File.exists?(done_file) ? File.read(done_file).split("\n") : [])
+  end
+
+  def self.undone_items
+    @@undone_items ||= items.reject{|item| item =~ done_regexp }
   end
 
   def self.done_file
@@ -64,7 +68,7 @@ class Tofu
       end
     end
     File.open(file + '.tmp', 'w') do |f|
-      f.printf("%s\n", items.reject{|item| item =~ done_regexp }.sort.join("\n"))
+      f.printf("%s\n", undone_items.sort.join("\n"))
     end
     `mv #{file + '.tmp'} #{file}`
     puts "Archived #{archived} item#{'s' unless archived == 1}"
@@ -100,7 +104,7 @@ class Tofu
       exit 1
     end
     hash = {}
-    File.read(file).split("\s").map(&:strip).select{|s| s.length > 1 && args.any?{|p| s.index(p) == 0 } }.each do |s|
+    (@@done ? done_items : items).join(' ').split("\s").map(&:strip).select{|s| s.length > 1 && args.any?{|p| s.index(p) == 0 } }.each do |s|
       hash[s] ? hash[s] += 1 : hash[s] = 1
     end
     hash.to_a.sort{|a,b| order = -(a[1] <=> b[1]); order == 0 ? a[0] <=> b[0] : order }.each do |k, v|

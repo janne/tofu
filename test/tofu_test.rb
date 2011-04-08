@@ -47,6 +47,13 @@ class TofuTest < Test::Unit::TestCase
     assert File.read(@todo_file).include?('more data')
   end
 
+  def test_add_and_mark_as_done
+    assert_equal "Added 'my data' to line 1 and marked as done\n", `#{@cmd_with_file} add --done my data`
+    assert File.read(@todo_file).include?("x #{@today} my data")
+    assert_equal "Added 'more data' to line 2 and marked as done\n", `#{@cmd_with_file} add --done more data`
+    assert File.read(@todo_file).include?("x #{@today} more data")
+  end
+
   # LIST
 
   def test_list

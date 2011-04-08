@@ -40,8 +40,13 @@ class Tofu
     texts.each do |text|
       length = items.length
       File.open(file, 'a') do |f|
-        printf(f, "%s\n", text)
-        printf("Added '%s' to line %i\n", text, length + 1)
+        if @@done
+          f.printf("x %s %s\n", today, text)
+          printf("Added '%s' to line %i and marked as done\n", text, length + 1)
+        else
+          f.printf("%s\n", text)
+          printf("Added '%s' to line %i\n", text, length + 1)
+        end
       end
     end
   end

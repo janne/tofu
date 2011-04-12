@@ -52,6 +52,11 @@ class TofuTest < Test::Unit::TestCase
     assert File.read(@todo_file).include?("x #{@today} my data")
   end
 
+  def test_add_archived
+    assert_equal "Added 'x #{@today} my data' to archive\n", `#{@cmd_with_file} add --archived my data`
+    assert File.read(@archive_file).include?("x #{@today} my data")
+  end
+
   # LIST
 
   def test_list
@@ -63,12 +68,14 @@ class TofuTest < Test::Unit::TestCase
     assert_equal "2 abc\n3 klm\n1 xyz\n", `#{@cmd_with_file}`
   end
 
-  def test_list_done
+  def test_list_done_and_archived
     File.open(@todo_file, 'a') {|f| f.write("todo 1\ntodo 2\n")}
     `#{@cmd_with_file} do 1`
     `#{@cmd_with_file} archive`
     `#{@cmd_with_file} do 1`
-    assert_equal "x #{@today} todo 1\nx #{@today} todo 2\n", `#{@cmd_with_file} --done`
+    assert_equal "x #{@today} todo 1\n", `#{@cmd_with_file} --archived`
+    assert_equal "x #{@today} todo 2\n", `#{@cmd_with_file} --done`
+    assert_equal "x #{@today} todo 1\nx #{@today} todo 2\n", `#{@cmd_with_file} --done --archived`
   end
 
   def test_list_and_filter
@@ -160,6 +167,11 @@ class TofuTest < Test::Unit::TestCase
   def test_count_done
     File.open(@todo_file, 'a') {|f| f.write("todo @b\nx #{@today} todo @a @b\n")}
     assert_equal "@a: 1\n@b: 1\n", `#{@cmd_with_file} count --done @`
+  end
+
+  def test_count_archived
+    File.open(@archive_file, 'a') {|f| f.write("x #{@today} todo @b\nx #{@today} todo @a @b\n")}
+    assert_equal "@b: 2\n@a: 1\n", `#{@cmd_with_file} count --archived @`
   end
 
   def test_missing_prefix

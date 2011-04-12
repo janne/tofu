@@ -24,7 +24,23 @@ class Tofu
   end
 
   def self.done_items
-    @@done_items ||= items.select{|item| item =~ done_regexp } + (File.exists?(done_file) ? File.read(done_file).split("\n") : [])
+    @@done_items ||= items.select{|item| item =~ done_regexp }
+  end
+
+  def self.archived_items
+    @@archived_items ||= (File.exists?(archive_file) ? File.read(archive_file).split("\n") : [])
+  end
+
+  def self.filtered_items
+    return @@filtered_items if defined?(@@filtered_items)
+    list = []
+    if !@@done && !@@archived
+      list += items
+    else
+      list += done_items if @@done
+      list += archived_items if @@archived
+    end
+    @@filtered_items = list
   end
 
   def self.undone_items
@@ -43,11 +59,18 @@ class Tofu
     texts = args.empty? ? $stdin.read.split("\n") : [args.join(' ')]
     texts.each do |text|
       length = items.length
-      File.open(file, 'a') do |f|
-        if @@done
+      if @@archived
+        File.open(archive_file, 'a') do |f|
+          f.printf("x %s %s\n", today, text)
+          printf("Added 'x %s %s' to archive\n", today, text)
+        end
+      elsif @@done
+        File.open(todo_file, 'a') do |f|
           f.printf("x %s %s\n", today, text)
           printf("Added '%s' to line %i and marked as done\n", text, length + 1)
-        else
+        end
+      else
+        File.open(todo_file, 'a') do |f|
           f.printf("%s\n", text)
           printf("Added '%s' to line %i\n", text, length + 1)
         end
@@ -104,7 +127,7 @@ class Tofu
       exit 1
     end
     hash = {}
-    (@@done ? done_items : items).join(' ').split("\s").map(&:strip).select{|s| s.length > 1 && args.any?{|p| s.index(p) == 0 } }.each do |s|
+    filtered_items.join(' ').split("\s").map(&:strip).select{|s| s.length > 1 && args.any?{|p| s.index(p) == 0 } }.each do |s|
       hash[s] ? hash[s] += 1 : hash[s] = 1
     end
     hash.to_a.sort{|a,b| order = -(a[1] <=> b[1]); order == 0 ? a[0] <=> b[0] : order }.each do |k, v|
@@ -114,14 +137,16 @@ class Tofu
 
   command 'list' do
     filters = ARGV
-    list = @@done ? done_items : items
-    row_items = (1..list.length).to_a.zip(list)
-    row_items = row_items.reject{|row, item| item =~ done_regexp} unless @@done
+    row_items = (1..filtered_items.length).to_a.zip(filtered_items)
+    row_items = row_items.reject{|row, item| item =~ done_regexp} unless @@done || @@archived
     unless filters.empty?
       row_items = row_items.select{|row, item| filters.all?{|filter| item.include?(filter)}}
-      puts "Nothing found" if row_items.empty?
     end
-    row_items.sort{|a, b| a[1] <=> b[1] }.each{|row, item| @@done ? puts(item) : printf("%*i %s\n", list.length.to_s.length, row, item) }
+    if row_items.empty?
+      puts "Nothing found"
+    else
+      row_items.sort{|a, b| a[1] <=> b[1] }.each{|row, item| @@done || @@archived ? puts(item) : printf("%*i %s\n", filtered_items.length.to_s.length, row, item) }
+    end
   end
 
   def self.option_parser
@@ -135,6 +160,8 @@ Usage
 
 Options
 EOF
+      opts.on('-a', '--archived', 'Run command on archived items') do
+        @@archived = true
       end
       opts.on('-d', '--done', 'Run command on done items') do
         @@done = true
@@ -162,6 +189,7 @@ EOF
       @@todo_file = File.expand_path("~/todo.txt")
     end
     @@done = false
+    @@archived = false
     opts = option_parser
     opts.parse!
     if File.exists?(todo_file)

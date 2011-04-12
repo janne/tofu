@@ -160,10 +160,10 @@ Usage
 
 Options
 EOF
-      opts.on('-a', '--archived', 'Run command on archived items') do
+      opts.on('-a', '--archived', 'affect archived items') do
         @@archived = true
       end
-      opts.on('-d', '--done', 'Run command on done items') do
+      opts.on('-d', '--done', 'affect done items') do
         @@done = true
       end
       opts.on('-f', '--file FILE', 'Specify todo file') do |f|

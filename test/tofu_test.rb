@@ -26,7 +26,7 @@ class TofuTest < Test::Unit::TestCase
 
   def test_tofurc
     `echo "hello" > temp.txt`
-    `echo "file: temp.txt" > .tofurc`
+    `echo "todo_file: temp.txt" > .tofurc`
     assert_equal "1 hello\n", `#{@cmd}`
     `rm temp.txt`
     `rm .tofurc`

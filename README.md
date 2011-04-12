@@ -37,7 +37,7 @@ another location is preferred, create a file called ".tofurc" in the current
 directory or the home directory, such as:
 
 <pre>
-echo "file: ~/Dropbox/tofu/todo.txt > ~/.tofurc"
+echo "todo_file: ~/Dropbox/tofu/todo.txt > ~/.tofurc"
 touch ~/Dropbox/tofu/todo.txt
 </pre>
 

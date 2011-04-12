@@ -11,8 +11,8 @@ class Tofu
     @commands[command] = block
   end
 
-  def self.file
-    @@file
+  def self.todo_file
+    @@todo_file
   end
 
   def self.today
@@ -20,7 +20,7 @@ class Tofu
   end
 
   def self.items
-    @@items ||= File.read(file).split("\n")
+    @@items ||= File.read(todo_file).split("\n")
   end
 
   def self.done_items
@@ -67,10 +67,10 @@ class Tofu
         archived += 1
       end
     end
-    File.open(file + '.tmp', 'w') do |f|
+    File.open(todo_file + '.tmp', 'w') do |f|
       f.printf("%s\n", undone_items.sort.join("\n"))
     end
-    `mv #{file + '.tmp'} #{file}`
+    `mv #{todo_file + '.tmp'} #{todo_file}`
     puts "Archived #{archived} item#{'s' unless archived == 1}"
   end
 
@@ -80,7 +80,7 @@ class Tofu
       puts "Missing or invalid line numbers"
       exit 1
     end
-    File.open(file + '.tmp', 'w') do |f|
+    File.open(todo_file + '.tmp', 'w') do |f|
       items.each_with_index do |item, i|
         if nums.include?(i+1)
           f.printf("x #{today} %s\n", item)
@@ -89,7 +89,7 @@ class Tofu
           f.printf("%s\n", item)
         end
       end
-      `mv #{file + '.tmp'} #{file}`
+      `mv #{todo_file + '.tmp'} #{todo_file}`
     end
   end
 
@@ -135,11 +135,12 @@ Usage
 
 Options
 EOF
-      opts.on('-f', '--file FILE', 'Specify todo file') do |f|
-        @@file = f
       end
       opts.on('-d', '--done', 'Run command on done items') do
         @@done = true
+      end
+      opts.on('-f', '--file FILE', 'Specify todo file') do |f|
+        @@todo_file = f
       end
       opts.on('-h', '--help', 'Display this help') do
         puts opts
@@ -156,21 +157,21 @@ EOF
 
   def self.run
     if rc = ["./.tofurc", "~/.tofurc"].map{|f| File.expand_path(f)}.detect{|f| File.exists?(f)}
-      @@file = File.expand_path(YAML.load(File.read(rc))['file'])
+      @@todo_file = File.expand_path(YAML.load(File.read(rc))['todo_file'])
     else
-      @@file = File.expand_path("~/todo.txt")
+      @@todo_file = File.expand_path("~/todo.txt")
     end
     @@done = false
     opts = option_parser
     opts.parse!
-    if File.exists?(file)
+    if File.exists?(todo_file)
       if (@commands.has_key?(ARGV[0]))
         @commands[ARGV[0]].call(ARGV[1..-1])
       else
         @commands['list'].call
       end
     else
-      puts "No such file exists '#{file}'. You may create it with 'touch #{file}'"
+      puts "No such file exists '#{todo_file}'. You may create it with 'touch #{todo_file}'"
       puts(opts)
     end
   end

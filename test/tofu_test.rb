@@ -118,7 +118,7 @@ class TofuTest < Test::Unit::TestCase
     File.open(@todo_file, 'a') {|f| f.write("todo\n")}
     assert_equal "Marked 'todo' as done\n", `#{@cmd_with_file} do 1`
     assert_equal "x #{@today} todo\n", File.read(@todo_file)
-    assert_equal "", `#{@cmd_with_file}`
+    assert_equal "Nothing found\n", `#{@cmd_with_file}`
   end
 
   # ARCHIVE

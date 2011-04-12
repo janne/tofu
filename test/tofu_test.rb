@@ -5,7 +5,7 @@ class TofuTest < Test::Unit::TestCase
     @cmd = File.dirname(__FILE__) + "/../tofu"
     @todo_file = File.dirname(__FILE__) + "/todo.txt"
     @cmd_with_file = "#{@cmd} -f #{@todo_file}"
-    @done_file = File.dirname(__FILE__) + "/done.todo.txt"
+    @archive_file = File.dirname(__FILE__) + "/archive.todo.txt"
     @today = Time.new.strftime('%Y-%m-%d')
 
     `cp /dev/null #{@todo_file}`
@@ -13,7 +13,7 @@ class TofuTest < Test::Unit::TestCase
 
   def teardown
     `rm #{@todo_file}`
-    `rm -f #{@done_file}`
+    `rm -f #{@archive_file}`
   end
 
   def test_executable
@@ -129,7 +129,7 @@ class TofuTest < Test::Unit::TestCase
     File.open(@todo_file, 'a') {|f| f.write("todo\n")}
     `#{@cmd_with_file} do 1`
     assert_equal "Archived 1 item\n", `#{@cmd_with_file} archive`
-    assert_equal "x #{@today} todo\n", File.read(@done_file)
+    assert_equal "x #{@today} todo\n", File.read(@archive_file)
     assert !File.exists?(@todo_file + '.tmp')
   end
 
@@ -143,13 +143,13 @@ class TofuTest < Test::Unit::TestCase
   def test_adding_archive_date
     File.open(@todo_file, 'a') {|f| f.write("X todo\n")}
     `#{@cmd_with_file} archive`
-    assert File.read(@done_file) == "x #{@today} todo\n"
+    assert File.read(@archive_file) == "x #{@today} todo\n"
   end
 
   def test_keeping_archive_date
     File.open(@todo_file, 'a') {|f| f.write("X 2011-01-01 todo\n")}
     `#{@cmd_with_file} archive`
-    assert File.read(@done_file) == "x 2011-01-01 todo\n"
+    assert File.read(@archive_file) == "x 2011-01-01 todo\n"
   end
 
   # COUNT

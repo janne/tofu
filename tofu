@@ -31,8 +31,8 @@ class Tofu
     @@undone_items ||= items.reject{|item| item =~ done_regexp }
   end
 
-  def self.done_file
-    File.dirname(file) + "/done." + File.basename(file)
+  def self.archive_file
+    File.dirname(todo_file) + "/archive." + File.basename(todo_file)
   end
 
   def self.done_regexp
@@ -57,7 +57,7 @@ class Tofu
 
   command 'archive', 'Archive all done items and sort remaining items' do
     archived = 0
-    File.open(done_file, 'a') do |f|
+    File.open(archive_file, 'a') do |f|
       items.select{|item| item =~ done_regexp }.each do |item|
         if (m = item.match(/^[xX]\s+(\d{4}-\d{2}-\d{2})\s(.*)$/))
           f.printf("x %s\n", item[2..-1])
@@ -95,7 +95,7 @@ class Tofu
 
   command 'edit', 'Open file in editor' do
     editor = ENV['EDITOR'] || 'vim'
-    exec "#{editor} #{@@done ? done_file : file}"
+    exec "#{editor} #{@@archived ? archive_file : todo_file}"
   end
 
   command 'count', 'Count words beginning with prefixes from args' do |args|

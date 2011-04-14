@@ -132,20 +132,10 @@ Usage
 
 Options
 EOF
-      opts.on('-a', '--archived', 'affect archived items') do
-        @archived = true
-      end
-      opts.on('-d', '--done', 'affect done items') do
-        @done = true
-      end
-      opts.on('-f', '--file FILE', 'Specify todo file') do |f|
-        @todo_file = f
-      end
-      opts.on('-h', '--help', 'Display this help') do
-        puts opts
-        exit
-      end
-
+      opts.on('-a', '--archived', 'affect archived items') { @archived = true }
+      opts.on('-d', '--done', 'affect done items') { @done = true }
+      opts.on('-f', '--file FILE', 'Specify todo file') { |f| @todo_file = f }
+      opts.on('-h', '--help', 'Display this help') { puts opts; exit }
       opts.separator ""
       opts.separator "Commands"
       @command_help.sort.each{|h| opts.separator h }
@@ -160,11 +150,10 @@ EOF
       @todo_file = File.expand_path(settings['todo_file']) if settings['todo_file']
       @archive_file = File.expand_path(settings['archive_file']) if settings['archive_file']
     end
-    @todo_file = File.expand_path("~/todo.txt") unless defined?(@todo_file)
-    @done = false
-    @archived = false
+    @done = @archived = false
     opts = option_parser
     opts.parse!
+    @todo_file = File.expand_path("~/todo.txt") unless defined?(@todo_file)
     @archive_file = File.dirname(@todo_file) + "/archive." + File.basename(@todo_file) unless defined?(@archive_file)
     if File.exists?(@todo_file)
       if (@commands.has_key?(ARGV[0]))

@@ -15,6 +15,10 @@ class Tofu
     @@todo_file
   end
 
+  def self.archive_file
+    @@archive_file
+  end
+
   def self.today
     Time.new.strftime("%Y-%m-%d")
   end
@@ -45,10 +49,6 @@ class Tofu
 
   def self.undone_items
     @@undone_items ||= items.reject{|item| item =~ done_regexp }
-  end
-
-  def self.archive_file
-    File.dirname(todo_file) + "/archive." + File.basename(todo_file)
   end
 
   def self.done_regexp
@@ -184,14 +184,16 @@ EOF
 
   def self.run
     if rc = ["./.tofurc", "~/.tofurc"].map{|f| File.expand_path(f)}.detect{|f| File.exists?(f)}
-      @@todo_file = File.expand_path(YAML.load(File.read(rc))['todo_file'])
-    else
-      @@todo_file = File.expand_path("~/todo.txt")
+      settings = YAML.load(File.read(rc))
+      @@todo_file = File.expand_path(settings['todo_file']) if settings['todo_file']
+      @@archive_file = File.expand_path(settings['archive_file']) if settings['archive_file']
     end
+    @@todo_file = File.expand_path("~/todo.txt") unless defined?(@@todo_file)
     @@done = false
     @@archived = false
     opts = option_parser
     opts.parse!
+    @@archive_file = File.dirname(todo_file) + "/archive." + File.basename(todo_file) unless defined?(@@archive_file)
     if File.exists?(todo_file)
       if (@commands.has_key?(ARGV[0]))
         @commands[ARGV[0]].call(ARGV[1..-1])

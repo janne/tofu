@@ -3,6 +3,9 @@ require 'optparse'
 require 'yaml'
 
 class Tofu
+  TODAY = Time.new.strftime("%Y-%m-%d")
+  DONE_REGEXP = /^[xX]\s/
+
   def self.command(command, help = nil, &block)
     @command_help ||= []
     spaces = " " * (10-command.length)
@@ -11,37 +14,17 @@ class Tofu
     @commands[command] = block
   end
 
-  def self.today
-    Time.new.strftime("%Y-%m-%d")
-  end
-
   def self.items
     @items ||= File.read(@todo_file).split("\n")
-  end
-
-  def self.done_items
-    @done_items ||= items.select{|item| item =~ done_regexp }
-  end
-
-  def self.archived_items
-    @archived_items ||= (File.exists?(@archive_file) ? File.read(@archive_file).split("\n") : [])
   end
 
   def self.filtered_items
     return @filtered_items if defined?(@filtered_items)
     if @done || @archived
-      @filtered_items = (@done ? done_items : []) + (@archived ? archived_items : [])
+      @filtered_items = (@done ? items.select{|item| item =~ DONE_REGEXP } : []) + (@archived && File.exists?(@archive_file) ? File.read(@archive_file).split("\n") : [])
     else
       @filtered_items = items
     end
-  end
-
-  def self.undone_items
-    @undone_items ||= items.reject{|item| item =~ done_regexp }
-  end
-
-  def self.done_regexp
-    /^[xX]\s/
   end
 
   command 'add', 'Create todo, text from args or STDIN, one per line' do |args|
@@ -50,12 +33,12 @@ class Tofu
       length = items.length
       if @archived
         File.open(@archive_file, 'a') do |f|
-          f.printf("x %s %s\n", today, text)
-          printf("Added 'x %s %s' to archive\n", today, text)
+          f.printf("x %s %s\n", TODAY, text)
+          printf("Added 'x %s %s' to archive\n", TODAY, text)
         end
       elsif @done
         File.open(@todo_file, 'a') do |f|
-          f.printf("x %s %s\n", today, text)
+          f.printf("x %s %s\n", TODAY, text)
           printf("Added '%s' to line %i and marked as done\n", text, length + 1)
         end
       else
@@ -70,17 +53,17 @@ class Tofu
   command 'archive', 'Archive all done items and sort remaining items' do
     archived = 0
     File.open(@archive_file, 'a') do |f|
-      items.select{|item| item =~ done_regexp }.each do |item|
+      items.select{|item| item =~ DONE_REGEXP }.each do |item|
         if (m = item.match(/^[xX]\s+(\d{4}-\d{2}-\d{2})\s(.*)$/))
           f.printf("x %s\n", item[2..-1])
         else
-          f.printf("x %s %s\n", today, item[2..-1])
+          f.printf("x %s %s\n", TODAY, item[2..-1])
         end
         archived += 1
       end
     end
     File.open(@todo_file + '.tmp', 'w') do |f|
-      f.printf("%s\n", undone_items.sort.join("\n"))
+      f.printf("%s\n", items.reject{|item| item =~ DONE_REGEXP }.sort.join("\n"))
     end
     `mv #{@todo_file + '.tmp'} #{@todo_file}`
     puts "Archived #{archived} item#{'s' unless archived == 1}"
@@ -88,14 +71,14 @@ class Tofu
 
   command 'do', 'Remove todo, add to done, row numbers from args' do |args|
     nums = args.map(&:to_i)
-    if nums.empty? || nums.any?{|num| num <= 0 || num > items.length || items[num-1] =~ done_regexp }
+    if nums.empty? || nums.any?{|num| num <= 0 || num > items.length || items[num-1] =~ DONE_REGEXP }
       puts "Missing or invalid line numbers"
       exit 1
     end
     File.open(@todo_file + '.tmp', 'w') do |f|
       items.each_with_index do |item, i|
         if nums.include?(i+1)
-          f.printf("x #{today} %s\n", item)
+          f.printf("x #{TODAY} %s\n", item)
           puts "Marked '#{item}' as done"
         else
           f.printf("%s\n", item)
@@ -127,7 +110,7 @@ class Tofu
   command 'list' do
     filters = ARGV
     row_items = (1..filtered_items.length).to_a.zip(filtered_items)
-    row_items = row_items.reject{|row, item| item =~ done_regexp} unless @done || @archived
+    row_items = row_items.reject{|row, item| item =~ DONE_REGEXP} unless @done || @archived
     unless filters.empty?
       row_items = row_items.select{|row, item| filters.all?{|filter| item.include?(filter)}}
     end

@@ -29,14 +29,11 @@ class Tofu
 
   def self.filtered_items
     return @filtered_items if defined?(@filtered_items)
-    list = []
-    if !@done && !@archived
-      list += items
+    if @done || @archived
+      @filtered_items = (@done ? done_items : []) + (@archived ? archived_items : [])
     else
-      list += done_items if @done
-      list += archived_items if @archived
+      @filtered_items = items
     end
-    @filtered_items = list
   end
 
   def self.undone_items

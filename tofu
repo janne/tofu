@@ -11,44 +11,36 @@ class Tofu
     @commands[command] = block
   end
 
-  def self.todo_file
-    @@todo_file
-  end
-
-  def self.archive_file
-    @@archive_file
-  end
-
   def self.today
     Time.new.strftime("%Y-%m-%d")
   end
 
   def self.items
-    @@items ||= File.read(todo_file).split("\n")
+    @items ||= File.read(@todo_file).split("\n")
   end
 
   def self.done_items
-    @@done_items ||= items.select{|item| item =~ done_regexp }
+    @done_items ||= items.select{|item| item =~ done_regexp }
   end
 
   def self.archived_items
-    @@archived_items ||= (File.exists?(archive_file) ? File.read(archive_file).split("\n") : [])
+    @archived_items ||= (File.exists?(@archive_file) ? File.read(@archive_file).split("\n") : [])
   end
 
   def self.filtered_items
-    return @@filtered_items if defined?(@@filtered_items)
+    return @filtered_items if defined?(@filtered_items)
     list = []
-    if !@@done && !@@archived
+    if !@done && !@archived
       list += items
     else
-      list += done_items if @@done
-      list += archived_items if @@archived
+      list += done_items if @done
+      list += archived_items if @archived
     end
-    @@filtered_items = list
+    @filtered_items = list
   end
 
   def self.undone_items
-    @@undone_items ||= items.reject{|item| item =~ done_regexp }
+    @undone_items ||= items.reject{|item| item =~ done_regexp }
   end
 
   def self.done_regexp
@@ -59,18 +51,18 @@ class Tofu
     texts = args.empty? ? $stdin.read.split("\n") : [args.join(' ')]
     texts.each do |text|
       length = items.length
-      if @@archived
-        File.open(archive_file, 'a') do |f|
+      if @archived
+        File.open(@archive_file, 'a') do |f|
           f.printf("x %s %s\n", today, text)
           printf("Added 'x %s %s' to archive\n", today, text)
         end
-      elsif @@done
-        File.open(todo_file, 'a') do |f|
+      elsif @done
+        File.open(@todo_file, 'a') do |f|
           f.printf("x %s %s\n", today, text)
           printf("Added '%s' to line %i and marked as done\n", text, length + 1)
         end
       else
-        File.open(todo_file, 'a') do |f|
+        File.open(@todo_file, 'a') do |f|
           f.printf("%s\n", text)
           printf("Added '%s' to line %i\n", text, length + 1)
         end
@@ -80,7 +72,7 @@ class Tofu
 
   command 'archive', 'Archive all done items and sort remaining items' do
     archived = 0
-    File.open(archive_file, 'a') do |f|
+    File.open(@archive_file, 'a') do |f|
       items.select{|item| item =~ done_regexp }.each do |item|
         if (m = item.match(/^[xX]\s+(\d{4}-\d{2}-\d{2})\s(.*)$/))
           f.printf("x %s\n", item[2..-1])
@@ -90,10 +82,10 @@ class Tofu
         archived += 1
       end
     end
-    File.open(todo_file + '.tmp', 'w') do |f|
+    File.open(@todo_file + '.tmp', 'w') do |f|
       f.printf("%s\n", undone_items.sort.join("\n"))
     end
-    `mv #{todo_file + '.tmp'} #{todo_file}`
+    `mv #{@todo_file + '.tmp'} #{@todo_file}`
     puts "Archived #{archived} item#{'s' unless archived == 1}"
   end
 
@@ -103,7 +95,7 @@ class Tofu
       puts "Missing or invalid line numbers"
       exit 1
     end
-    File.open(todo_file + '.tmp', 'w') do |f|
+    File.open(@todo_file + '.tmp', 'w') do |f|
       items.each_with_index do |item, i|
         if nums.include?(i+1)
           f.printf("x #{today} %s\n", item)
@@ -112,13 +104,13 @@ class Tofu
           f.printf("%s\n", item)
         end
       end
-      `mv #{todo_file + '.tmp'} #{todo_file}`
+      `mv #{@todo_file + '.tmp'} #{@todo_file}`
     end
   end
 
   command 'edit', 'Open file in editor' do
     editor = ENV['EDITOR'] || 'vim'
-    exec "#{editor} #{@@archived ? archive_file : todo_file}"
+    exec "#{editor} #{@archived ? @archive_file : @todo_file}"
   end
 
   command 'count', 'Count words beginning with prefixes from args' do |args|
@@ -138,14 +130,14 @@ class Tofu
   command 'list' do
     filters = ARGV
     row_items = (1..filtered_items.length).to_a.zip(filtered_items)
-    row_items = row_items.reject{|row, item| item =~ done_regexp} unless @@done || @@archived
+    row_items = row_items.reject{|row, item| item =~ done_regexp} unless @done || @archived
     unless filters.empty?
       row_items = row_items.select{|row, item| filters.all?{|filter| item.include?(filter)}}
     end
     if row_items.empty?
       puts "Nothing found"
     else
-      row_items.sort{|a, b| a[1] <=> b[1] }.each{|row, item| @@done || @@archived ? puts(item) : printf("%*i %s\n", filtered_items.length.to_s.length, row, item) }
+      row_items.sort{|a, b| a[1] <=> b[1] }.each{|row, item| @done || @archived ? puts(item) : printf("%*i %s\n", filtered_items.length.to_s.length, row, item) }
     end
   end
 
@@ -161,13 +153,13 @@ Usage
 Options
 EOF
       opts.on('-a', '--archived', 'affect archived items') do
-        @@archived = true
+        @archived = true
       end
       opts.on('-d', '--done', 'affect done items') do
-        @@done = true
+        @done = true
       end
       opts.on('-f', '--file FILE', 'Specify todo file') do |f|
-        @@todo_file = f
+        @todo_file = f
       end
       opts.on('-h', '--help', 'Display this help') do
         puts opts
@@ -185,23 +177,23 @@ EOF
   def self.run
     if rc = ["./.tofurc", "~/.tofurc"].map{|f| File.expand_path(f)}.detect{|f| File.exists?(f)}
       settings = YAML.load(File.read(rc))
-      @@todo_file = File.expand_path(settings['todo_file']) if settings['todo_file']
-      @@archive_file = File.expand_path(settings['archive_file']) if settings['archive_file']
+      @todo_file = File.expand_path(settings['todo_file']) if settings['todo_file']
+      @archive_file = File.expand_path(settings['archive_file']) if settings['archive_file']
     end
-    @@todo_file = File.expand_path("~/todo.txt") unless defined?(@@todo_file)
-    @@done = false
-    @@archived = false
+    @todo_file = File.expand_path("~/todo.txt") unless defined?(@todo_file)
+    @done = false
+    @archived = false
     opts = option_parser
     opts.parse!
-    @@archive_file = File.dirname(todo_file) + "/archive." + File.basename(todo_file) unless defined?(@@archive_file)
-    if File.exists?(todo_file)
+    @archive_file = File.dirname(@todo_file) + "/archive." + File.basename(@todo_file) unless defined?(@archive_file)
+    if File.exists?(@todo_file)
       if (@commands.has_key?(ARGV[0]))
         @commands[ARGV[0]].call(ARGV[1..-1])
       else
         @commands['list'].call
       end
     else
-      puts "No such file exists '#{todo_file}'. You may create it with 'touch #{todo_file}'"
+      puts "No such file exists '#{@todo_file}'. You may create it with 'touch #{@todo_file}'"
       puts(opts)
     end
   end

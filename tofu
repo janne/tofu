@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require 'optparse'
 require 'yaml'
+require 'tempfile'
 
 class Tofu
   TODAY = Time.new.strftime("%Y-%m-%d")
@@ -24,6 +25,18 @@ class Tofu
       @filtered_items = (@done ? items.select{|item| item =~ DONE_REGEXP } : []) + (@archived && File.exists?(@archive_file) ? File.read(@archive_file).split("\n") : [])
     else
       @filtered_items = items
+    end
+  end
+
+  def self.less(lines)
+    file = Tempfile.new('tofu')
+    begin
+      file.write(lines.join("\n"))
+      file.close
+      pager = ENV['PAGER'] || 'less -P?'
+      system("#{pager} #{file.path}")
+    ensure
+      file.unlink
     end
   end
 
@@ -117,7 +130,8 @@ class Tofu
     if row_items.empty?
       puts "Nothing found"
     else
-      row_items.sort{|a, b| a[1] <=> b[1] }.each{|row, item| @done || @archived ? puts(item) : printf("%*i %s\n", filtered_items.length.to_s.length, row, item) }
+      lines = row_items.sort{|a, b| a[1] <=> b[1] }.map{|row, item| @done || @archived ? item : sprintf("%*i %s", filtered_items.length.to_s.length, row, item) }
+      if lines.length > `tput lines`.to_i then less(lines) else puts lines end
     end
   end
 

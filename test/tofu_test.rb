@@ -24,12 +24,12 @@ class TofuTest < Test::Unit::TestCase
     assert `#{@cmd} -f missing_file`.include?("No such file exists 'missing_file'. You may create it with 'touch missing_file'\n")
   end
 
-  def test_tofurc
+  def test_tofuconfig
     `echo "hello" > temp.txt`
-    `echo "todo_file: temp.txt" > .tofurc`
+    `echo "todo_file: temp.txt" > .tofuconfig`
     assert_equal "1 hello\n", `#{@cmd}`
     `rm temp.txt`
-    `rm .tofurc`
+    `rm .tofuconfig`
   end
 
   # HELP

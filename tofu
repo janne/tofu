@@ -159,7 +159,7 @@ EOF
   end
 
   def self.run
-    if rc = ["./.tofurc", "~/.tofurc"].map{|f| File.expand_path(f)}.detect{|f| File.exists?(f)}
+    if rc = ["./.tofuconfig", "~/.tofuconfig"].map{|f| File.expand_path(f)}.detect{|f| File.exists?(f)}
       settings = YAML.load(File.read(rc))
       @todo_file = File.expand_path(settings['todo_file']) if settings['todo_file']
       @archive_file = File.expand_path(settings['archive_file']) if settings['archive_file']

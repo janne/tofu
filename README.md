@@ -33,11 +33,11 @@ sudo chmod +x ~/usr/local/bin/tofu
 Configuration
 -------------
 The default location for the todo file is todo.txt in the home directory. If
-another location is preferred, create a file called ".tofurc" in the current
+another location is preferred, create a file called ".tofuconfig" in the current
 directory or the home directory, such as:
 
 <pre>
-echo "todo_file: ~/Dropbox/tofu/todo.txt > ~/.tofurc"
+echo "todo_file: ~/Dropbox/tofu/todo.txt > ~/.tofuconfig"
 touch ~/Dropbox/tofu/todo.txt
 </pre>
 
@@ -69,10 +69,10 @@ tofu edit --done
 </pre>
 
 To handle a todo list for a development project, add a todo file and a local
-.tofurc. Any tofu command used in that directory is now using the local todo file.
+.tofuconfig. Any tofu command used in that directory is now using the local todo file.
 
 <pre>
-echo "file: todo.txt" > .tofurc
+echo "file: todo.txt" > .tofuconfig
 </pre>
 
 You may wish to add context for items with the character @, such as "Call mom
